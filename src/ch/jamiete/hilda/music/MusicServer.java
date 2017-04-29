@@ -363,6 +363,8 @@ public class MusicServer extends AudioEventAdapter implements EventListener {
         if (exception.getCause() instanceof UnsatisfiedLinkError) {
             MusicManager.getLogger().warning("Encountered song I didn't know how to play.");
             this.sendMessage("I don't know how to play that type of file; skipping.");
+        } else if (exception.getMessage().startsWith("This video contains content from")) {
+            this.sendMessage("That track has been restricted by the copyright holder and cannot be played.");
         } else {
             MusicManager.getLogger().log(Level.WARNING, "Encountered an exception while playing " + track.getIdentifier() + "...", exception);
             this.sendMessage("Track exception (" + exception.getMessage() + "); skipping.");
