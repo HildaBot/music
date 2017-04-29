@@ -18,7 +18,7 @@ public class MusicLeaveTask implements Runnable {
         server.shutdown();
 
         if (!server.isStopping()) {
-            hilda.getExecutor().schedule(new MusicLeaveTask(hilda, server), 30, TimeUnit.MINUTES);
+            server.setLeave(hilda.getExecutor().schedule(new MusicLeaveTask(hilda, server), 30, TimeUnit.MINUTES));
         }
     }
 

@@ -74,7 +74,7 @@ public class MusicServer extends AudioEventAdapter implements EventListener {
         this.skips.add(string);
     }
 
-    public void setLeave(ScheduledFuture<MusicLeaveTask> task) {
+    public void setLeave(ScheduledFuture<?> task) {
         this.task = task;
     }
 
