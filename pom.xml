@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     
     <groupId>ch.jamiete.hilda</groupId>
-    <artifactId>HildaMusic</artifactId>
+    <artifactId>music</artifactId>
     <version>1.0.0</version>
     <name>HildaMusic</name>
     <description>A ping plugin for Hilda.</description>
@@ -29,6 +29,16 @@
             <groupId>ch.jamiete.hilda</groupId>
             <artifactId>Hilda</artifactId>
             <version>1.0.0</version>
+        </dependency>
+        <dependency>
+        	<groupId>com.sedmelluq</groupId>
+        	<artifactId>lavaplayer</artifactId>
+        	<version>1.2.34</version>
+        </dependency>
+        <dependency>
+        	<groupId>com.mpatric</groupId>
+        	<artifactId>mp3agic</artifactId>
+        	<version>0.9.0</version>
         </dependency>
     </dependencies>
     
