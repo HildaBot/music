@@ -1,6 +1,7 @@
 package ch.jamiete.hilda.music;
 
 import ch.jamiete.hilda.Hilda;
+import ch.jamiete.hilda.music.commands.MusicBaseCommand;
 import ch.jamiete.hilda.plugins.HildaPlugin;
 
 public class MusicPlugin extends HildaPlugin {

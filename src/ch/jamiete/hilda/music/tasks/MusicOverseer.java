@@ -1,6 +1,8 @@
-package ch.jamiete.hilda.music;
+package ch.jamiete.hilda.music.tasks;
 
 import java.util.TimerTask;
+import ch.jamiete.hilda.music.MusicManager;
+import ch.jamiete.hilda.music.MusicServer;
 
 public class MusicOverseer extends TimerTask {
     private final MusicServer server;

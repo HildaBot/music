@@ -1,4 +1,4 @@
-package ch.jamiete.hilda.music;
+package ch.jamiete.hilda.music.commands;
 
 import java.util.Arrays;
 import java.util.logging.Level;
@@ -9,6 +9,9 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.Util;
 import ch.jamiete.hilda.commands.ChannelCommand;
+import ch.jamiete.hilda.music.MusicManager;
+import ch.jamiete.hilda.music.MusicServer;
+import ch.jamiete.hilda.music.QueueItem;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;

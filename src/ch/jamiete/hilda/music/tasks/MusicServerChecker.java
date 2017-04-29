@@ -1,6 +1,8 @@
-package ch.jamiete.hilda.music;
+package ch.jamiete.hilda.music.tasks;
 
 import java.util.TimerTask;
+import ch.jamiete.hilda.music.MusicManager;
+import ch.jamiete.hilda.music.MusicServer;
 import net.dv8tion.jda.core.entities.Guild;
 
 public class MusicServerChecker extends TimerTask {

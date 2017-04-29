@@ -1,8 +1,9 @@
-package ch.jamiete.hilda.music;
+package ch.jamiete.hilda.music.commands;
 
 import java.util.Arrays;
 import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.commands.ChannelSeniorCommand;
+import ch.jamiete.hilda.music.MusicManager;
 
 public class MusicBaseCommand extends ChannelSeniorCommand {
 

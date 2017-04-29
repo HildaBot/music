@@ -1,8 +1,10 @@
-package ch.jamiete.hilda.music;
+package ch.jamiete.hilda.music.commands;
 
 import java.util.Arrays;
 import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.commands.ChannelCommand;
+import ch.jamiete.hilda.music.MusicManager;
+import ch.jamiete.hilda.music.MusicServer;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;

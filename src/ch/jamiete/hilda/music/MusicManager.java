@@ -11,6 +11,8 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.Sanity;
+import ch.jamiete.hilda.music.tasks.MusicOverseer;
+import ch.jamiete.hilda.music.tasks.MusicServerChecker;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.MessageBuilder.Formatting;
 import net.dv8tion.jda.core.entities.Guild;
