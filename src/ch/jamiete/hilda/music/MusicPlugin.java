@@ -14,20 +14,12 @@ public class MusicPlugin extends HildaPlugin {
 
     @Override
     public void onEnable() {
-        this.music = new MusicManager(getHilda());
-        getHilda().getCommandManager().registerChannelCommand(new MusicBaseCommand(getHilda(), this.music));
+        this.music = new MusicManager(this.getHilda(), this);
+        this.getHilda().getCommandManager().registerChannelCommand(new MusicBaseCommand(this.getHilda(), this.music));
     }
 
     public MusicManager getMusicManager() {
         return music;
-    }
-
-    @Override
-    public void onDisable() {
-    }
-
-    @Override
-    public void onLoad() {
     }
 
 }
