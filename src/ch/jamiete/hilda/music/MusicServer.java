@@ -6,12 +6,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
+import com.google.gson.JsonElement;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import ch.jamiete.hilda.Start;
+import ch.jamiete.hilda.configuration.Configuration;
 import ch.jamiete.hilda.runnables.GameSetTask;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;
@@ -36,6 +38,7 @@ public class MusicServer extends AudioEventAdapter implements EventListener {
     private final AudioPlayer player;
     private final Guild guild;
     private VoiceChannel channel;
+    private Configuration config;
     private final AudioPlayerSendHandler handler;
     private final List<QueueItem> queue = Collections.synchronizedList(new ArrayList<QueueItem>());
     private QueueItem now;
@@ -50,6 +53,7 @@ public class MusicServer extends AudioEventAdapter implements EventListener {
         this.handler = new AudioPlayerSendHandler(player);
         this.guild = guild;
         this.guild.getAudioManager().setSendingHandler(this.handler);
+        this.config = this.manager.getHilda().getConfigurationManager().getConfiguration(this.manager.getPlugin(), this.guild.getId());
         this.manager.getHilda().getBot().addEventListener(this);
     }
 
@@ -67,6 +71,10 @@ public class MusicServer extends AudioEventAdapter implements EventListener {
      */
     public VoiceChannel getChannel() {
         return this.channel;
+    }
+
+    public Configuration getConfig() {
+        return this.config;
     }
 
     /**
@@ -493,13 +501,21 @@ public class MusicServer extends AudioEventAdapter implements EventListener {
     public void sendMessage(final String message) {
         TextChannel channel = null;
 
-        for (final TextChannel chan : this.guild.getTextChannels()) {
-            if (chan.getName().equalsIgnoreCase("bot") && chan.canTalk()) {
-                channel = chan;
-            }
+        JsonElement output = this.config.get().get("output");
 
-            if (chan.getName().equalsIgnoreCase("bots") && chan.canTalk()) {
-                channel = chan;
+        if (output != null) {
+            channel = this.guild.getTextChannelById(output.getAsString());
+        }
+
+        if (channel == null) {
+            for (final TextChannel chan : this.guild.getTextChannels()) {
+                if (chan.getName().equalsIgnoreCase("bot") && chan.canTalk()) {
+                    channel = chan;
+                }
+
+                if (chan.getName().equalsIgnoreCase("bots") && chan.canTalk()) {
+                    channel = chan;
+                }
             }
         }
 

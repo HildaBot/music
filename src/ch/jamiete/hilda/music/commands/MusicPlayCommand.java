@@ -2,6 +2,7 @@ package ch.jamiete.hilda.music.commands;
 
 import java.util.Arrays;
 import java.util.logging.Level;
+import com.google.gson.JsonElement;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
@@ -15,6 +16,7 @@ import ch.jamiete.hilda.music.QueueItem;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.VoiceChannel;
 
 public class MusicPlayCommand extends ChannelCommand {
 
@@ -299,6 +301,18 @@ public class MusicPlayCommand extends ChannelCommand {
         final MusicServer server = this.manager.hasServer(message.getGuild()) ? this.manager.getServer(message.getGuild()) : this.manager.createServer(message.getGuild());
 
         if (server.getChannel() == null) {
+            JsonElement lock = server.getConfig().get().get("lock");
+
+            if (lock != null) {
+                VoiceChannel req = message.getGuild().getVoiceChannelById(lock.getAsString());
+
+                if (req != null && !member.getVoiceState().getChannel().equals(req)) {
+                    MusicManager.getLogger().fine("Rejected command because user not in locked voice channel");
+                    this.reply(message, "You can only queue music in " + req.getName());
+                    return;
+                }
+            }
+
             server.setChannel(member.getVoiceState().getChannel()); // Join channel
         } else {
             if (server.getChannel() != member.getVoiceState().getChannel()) {

@@ -13,6 +13,7 @@ import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.Sanity;
 import ch.jamiete.hilda.music.tasks.MusicOverseer;
 import ch.jamiete.hilda.music.tasks.MusicServerChecker;
+import ch.jamiete.hilda.plugins.HildaPlugin;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.MessageBuilder.Formatting;
 import net.dv8tion.jda.core.entities.Guild;
@@ -117,17 +118,16 @@ public class MusicManager {
     }
 
     private int played = 0;
-
     private int queued = 0;
 
     private final Hilda hilda;
-
+    private final HildaPlugin plugin;
     private final AudioPlayerManager playerManager;
-
     private final ArrayList<MusicServer> servers = new ArrayList<MusicServer>();
 
-    public MusicManager(final Hilda hilda) {
+    public MusicManager(final Hilda hilda, final HildaPlugin plugin) {
         this.hilda = hilda;
+        this.plugin = plugin;
 
         this.playerManager = new DefaultAudioPlayerManager();
         AudioSourceManagers.registerRemoteSources(this.playerManager);
@@ -175,6 +175,10 @@ public class MusicManager {
 
     public int getPlayed() {
         return this.played;
+    }
+
+    public HildaPlugin getPlugin() {
+        return this.plugin;
     }
 
     public int getQueued() {

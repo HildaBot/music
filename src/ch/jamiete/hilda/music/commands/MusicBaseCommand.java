@@ -14,6 +14,7 @@ public class MusicBaseCommand extends ChannelSeniorCommand {
         this.setAliases(Arrays.asList(new String[] { "m" }));
         this.setDescription("Manages the music player.");
 
+        this.registerSubcommand(new MusicAdminCommand(hilda, manager));
         this.registerSubcommand(new MusicForceskipCommand(hilda, manager));
         this.registerSubcommand(new MusicNowPlayingCommand(hilda, manager));
         this.registerSubcommand(new MusicPlayCommand(hilda, manager));
