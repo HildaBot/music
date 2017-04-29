@@ -11,7 +11,7 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.Sanity;
-import ch.jamiete.hilda.music.tasks.MusicOverseer;
+import ch.jamiete.hilda.music.tasks.MusicStartupCheckerTask;
 import ch.jamiete.hilda.music.tasks.MusicServerChecker;
 import ch.jamiete.hilda.plugins.HildaPlugin;
 import net.dv8tion.jda.core.MessageBuilder;
@@ -156,7 +156,7 @@ public class MusicManager {
         final MusicServer server = new MusicServer(this, this.playerManager.createPlayer(), guild);
         this.servers.add(server);
 
-        this.hilda.getExecutor().schedule(new MusicOverseer(server), 5, TimeUnit.SECONDS);
+        this.hilda.getExecutor().schedule(new MusicStartupCheckerTask(server), 90, TimeUnit.SECONDS);
 
         return server;
     }

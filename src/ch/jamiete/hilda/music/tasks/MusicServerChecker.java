@@ -15,12 +15,10 @@ public class MusicServerChecker extends TimerTask {
     @Override
     public void run() {
         for (final MusicServer server : this.manager.getServers()) {
-            if (server.getPlayer().getPlayingTrack() == null) {
-                MusicManager.getLogger().info("Shutting down empty server " + server.getGuild().getName());
-                server.shutdown();
-            } else {
-                MusicManager.getLogger().fine("Prompting server " + server.getGuild().getName());
-                server.prompt();
+            server.prompt();
+
+            if (server.isStopping()) {
+                return;
             }
 
             if (server.getGuild().getAudioManager().isConnected() && server.getGuild().getAudioManager().getConnectedChannel() != server.getChannel()) {

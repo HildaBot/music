@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import com.google.gson.JsonElement;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
@@ -14,6 +16,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import ch.jamiete.hilda.Start;
 import ch.jamiete.hilda.configuration.Configuration;
+import ch.jamiete.hilda.music.tasks.MusicLeaveTask;
 import ch.jamiete.hilda.runnables.GameSetTask;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;
@@ -36,14 +39,20 @@ import net.dv8tion.jda.core.hooks.EventListener;
 public class MusicServer extends AudioEventAdapter implements EventListener {
     private final MusicManager manager;
     private final AudioPlayer player;
-    private final Guild guild;
-    private VoiceChannel channel;
     private Configuration config;
     private final AudioPlayerSendHandler handler;
-    private final List<QueueItem> queue = Collections.synchronizedList(new ArrayList<QueueItem>());
-    private QueueItem now;
+
+    private final Guild guild;
+    private VoiceChannel channel;
+
     private boolean stopping = false;
+    private ScheduledFuture<?> task;
+
+    private final List<QueueItem> queue = Collections.synchronizedList(new ArrayList<QueueItem>());
     private final ArrayList<String> skips = new ArrayList<String>();
+
+    private QueueItem now;
+
     private String lastplaying;
 
     public MusicServer(final MusicManager manager, final AudioPlayer player, final Guild guild) {
@@ -63,6 +72,10 @@ public class MusicServer extends AudioEventAdapter implements EventListener {
      */
     public void addSkip(final String string) {
         this.skips.add(string);
+    }
+
+    public void setLeave(ScheduledFuture<MusicLeaveTask> task) {
+        this.task = task;
     }
 
     /**
@@ -404,6 +417,11 @@ public class MusicServer extends AudioEventAdapter implements EventListener {
     public void play(final QueueItem item) {
         MusicManager.getLogger().info("Playing a song in " + this.guild.getName() + " " + this.guild.getId() + " " + item);
 
+        if (this.task != null) {
+            this.task.cancel(false);
+            this.task = null;
+        }
+
         this.now = item;
 
         this.player.playTrack(item == null ? null : item.getTrack());
@@ -618,10 +636,32 @@ public class MusicServer extends AudioEventAdapter implements EventListener {
         }
     }
 
-    /**
-     * Shuts down the bot.
-     */
     public void shutdown() {
+        boolean clash = false;
+
+        for (MusicServer server : this.manager.getServers()) {
+            if (server == this) {
+                continue;
+            }
+
+            for (Member member : server.getChannel().getMembers()) {
+                if (this.guild.getMember(member.getUser()) != null) {
+                    clash = true;
+                }
+            }
+        }
+
+        if (!clash) {
+            this.shutdownNow();
+        } else {
+            this.task = this.manager.getHilda().getExecutor().schedule(new MusicLeaveTask(this.manager.getHilda(), this), 30, TimeUnit.MINUTES);
+        }
+    }
+
+    /**
+     * Shuts down the bot immediately.
+     */
+    public void shutdownNow() {
         MusicManager.getLogger().info("Shutting down " + this.guild.getName() + " " + this.guild.getId() + "...");
 
         this.stopping = true;
