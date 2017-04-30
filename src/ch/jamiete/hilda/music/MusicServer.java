@@ -654,7 +654,7 @@ public class MusicServer extends AudioEventAdapter implements EventListener {
         if (!clash) {
             this.shutdownNow();
         } else {
-            this.task = this.manager.getHilda().getExecutor().schedule(new MusicLeaveTask(this.manager.getHilda(), this), 30, TimeUnit.MINUTES);
+            this.task = this.manager.getHilda().getExecutor().schedule(new MusicLeaveTask(this), 5, TimeUnit.MINUTES);
         }
     }
 
