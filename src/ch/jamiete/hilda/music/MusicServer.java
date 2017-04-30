@@ -640,11 +640,15 @@ public class MusicServer extends AudioEventAdapter implements EventListener {
         boolean clash = false;
 
         for (MusicServer server : this.manager.getServers()) {
-            if (server == this) {
+            if (server == this || server.getPlayer().getPlayingTrack() == null) {
                 continue;
             }
 
             for (Member member : server.getChannel().getMembers()) {
+                if (member.getUser() == this.manager.getHilda().getBot().getSelfUser()) {
+                    continue;
+                }
+
                 if (this.guild.getMember(member.getUser()) != null) {
                     clash = true;
                 }
