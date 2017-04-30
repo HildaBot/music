@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 import com.google.gson.JsonElement;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
@@ -644,11 +645,7 @@ public class MusicServer extends AudioEventAdapter implements EventListener {
                 continue;
             }
 
-            for (Member member : server.getChannel().getMembers()) {
-                if (member.getUser() == this.manager.getHilda().getBot().getSelfUser()) {
-                    continue;
-                }
-
+            for (Member member : server.getChannel().getMembers().stream().filter(m -> !m.getUser().isBot()).collect(Collectors.toList())) {
                 if (this.guild.getMember(member.getUser()) != null) {
                     clash = true;
                 }
