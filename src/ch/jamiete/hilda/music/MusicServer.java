@@ -663,6 +663,10 @@ public class MusicServer extends AudioEventAdapter implements EventListener {
      * Shuts down the bot immediately.
      */
     public void shutdownNow() {
+        if (this.stopping) {
+            return;
+        }
+
         MusicManager.getLogger().info("Shutting down " + this.guild.getName() + " " + this.guild.getId() + "...");
 
         this.stopping = true;
