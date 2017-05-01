@@ -4,7 +4,8 @@ import java.util.List;
 import com.google.gson.JsonElement;
 import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.Util;
-import ch.jamiete.hilda.commands.ChannelCommand;
+import ch.jamiete.hilda.commands.ChannelSeniorCommand;
+import ch.jamiete.hilda.commands.ChannelSubCommand;
 import ch.jamiete.hilda.configuration.Configuration;
 import ch.jamiete.hilda.music.MusicManager;
 import net.dv8tion.jda.core.Permission;
@@ -12,11 +13,11 @@ import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.VoiceChannel;
 
-public class MusicAdminCommand extends ChannelCommand {
+public class MusicAdminCommand extends ChannelSubCommand {
     private final MusicManager manager;
 
-    public MusicAdminCommand(final Hilda hilda, final MusicManager manager) {
-        super(hilda);
+    public MusicAdminCommand(final Hilda hilda, final ChannelSeniorCommand senior, final MusicManager manager) {
+        super(hilda, senior);
 
         this.manager = manager;
 

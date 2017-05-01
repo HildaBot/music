@@ -3,7 +3,8 @@ package ch.jamiete.hilda.music.commands;
 import java.util.Arrays;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import ch.jamiete.hilda.Hilda;
-import ch.jamiete.hilda.commands.ChannelCommand;
+import ch.jamiete.hilda.commands.ChannelSeniorCommand;
+import ch.jamiete.hilda.commands.ChannelSubCommand;
 import ch.jamiete.hilda.music.MusicManager;
 import ch.jamiete.hilda.music.MusicServer;
 import ch.jamiete.hilda.music.QueueItem;
@@ -11,11 +12,11 @@ import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.MessageBuilder.Formatting;
 import net.dv8tion.jda.core.entities.Message;
 
-public class MusicNowPlayingCommand extends ChannelCommand {
+public class MusicNowPlayingCommand extends ChannelSubCommand {
     private final MusicManager manager;
 
-    public MusicNowPlayingCommand(final Hilda hilda, final MusicManager manager) {
-        super(hilda);
+    public MusicNowPlayingCommand(final Hilda hilda, final ChannelSeniorCommand senior, final MusicManager manager) {
+        super(hilda, senior);
 
         this.manager = manager;
 

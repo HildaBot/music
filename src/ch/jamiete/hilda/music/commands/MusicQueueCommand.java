@@ -5,17 +5,18 @@ import java.util.Collections;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import ch.jamiete.hilda.Hilda;
-import ch.jamiete.hilda.commands.ChannelCommand;
+import ch.jamiete.hilda.commands.ChannelSeniorCommand;
+import ch.jamiete.hilda.commands.ChannelSubCommand;
 import ch.jamiete.hilda.music.MusicManager;
 import ch.jamiete.hilda.music.MusicServer;
 import ch.jamiete.hilda.music.QueueItem;
 import net.dv8tion.jda.core.entities.Message;
 
-public class MusicQueueCommand extends ChannelCommand {
+public class MusicQueueCommand extends ChannelSubCommand {
     private final MusicManager manager;
 
-    public MusicQueueCommand(final Hilda hilda, final MusicManager manager) {
-        super(hilda);
+    public MusicQueueCommand(final Hilda hilda, final ChannelSeniorCommand senior, final MusicManager manager) {
+        super(hilda, senior);
 
         this.manager = manager;
 

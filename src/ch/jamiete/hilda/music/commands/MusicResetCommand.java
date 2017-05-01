@@ -2,18 +2,19 @@ package ch.jamiete.hilda.music.commands;
 
 import java.util.Arrays;
 import ch.jamiete.hilda.Hilda;
-import ch.jamiete.hilda.commands.ChannelCommand;
+import ch.jamiete.hilda.commands.ChannelSeniorCommand;
+import ch.jamiete.hilda.commands.ChannelSubCommand;
 import ch.jamiete.hilda.music.MusicManager;
 import ch.jamiete.hilda.music.MusicServer;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 
-public class MusicResetCommand extends ChannelCommand {
+public class MusicResetCommand extends ChannelSubCommand {
     private final MusicManager manager;
 
-    public MusicResetCommand(final Hilda hilda, final MusicManager manager) {
-        super(hilda);
+    public MusicResetCommand(final Hilda hilda, final ChannelSeniorCommand senior, final MusicManager manager) {
+        super(hilda, senior);
 
         this.manager = manager;
 
