@@ -380,7 +380,7 @@ public class MusicServer extends AudioEventAdapter implements EventListener {
         } else if (exception.getMessage().startsWith("This video contains content from")) {
             this.sendMessage("That track has been restricted by the copyright holder and cannot be played.");
         } else {
-            MusicManager.getLogger().log(Level.WARNING, "Encountered an exception while playing " + track.getIdentifier() + "...", exception);
+            MusicManager.getLogger().log(Level.WARNING, "Encountered an exception while playing " + track.getIdentifier() + " in " + this.guild.getName() + "...", exception);
             this.sendMessage("Track exception (" + exception.getMessage() + "); skipping.");
         }
 
@@ -406,7 +406,7 @@ public class MusicServer extends AudioEventAdapter implements EventListener {
 
     @Override
     public void onTrackStuck(final AudioPlayer player, final AudioTrack track, final long thresholdMs) {
-        MusicManager.getLogger().warning("Track " + track.getIdentifier() + " got stuck; skipping...");
+        MusicManager.getLogger().warning("Track " + track.getIdentifier() + " got stuck in " + this.guild.getName() + "; skipping...");
         this.sendMessage("Track stuck; skipping.");
         this.play(this.queue.get(0));
     }
