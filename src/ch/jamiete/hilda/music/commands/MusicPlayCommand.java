@@ -40,9 +40,16 @@ public class MusicPlayCommand extends ChannelSubCommand {
 
         @Override
         public void loadFailed(final FriendlyException e) {
-            MusicManager.getLogger().log(Level.WARNING, "Couldn't load track", e);
-            MusicPlayCommand.this.reply(this.message, "I couldn't load that track: " + e.getMessage() + ".");
-            Hilda.getLogger().log(Level.WARNING, "Couldn't load track", e);
+            if (e.getMessage().startsWith("The uploader has not made this video available")) {
+                MusicPlayCommand.this.reply(this.message, "That track is geo-blocked and cannot be played.");
+            } else if (e.getMessage().startsWith("This video contains content from")) {
+                MusicPlayCommand.this.reply(this.message, "That track has been restricted by the copyright holder and cannot be played.");
+            } else {
+                MusicManager.getLogger().log(Level.WARNING, "Couldn't load track", e);
+                MusicPlayCommand.this.reply(this.message, "I couldn't load that track: " + e.getMessage() + ".");
+                Hilda.getLogger().log(Level.WARNING, "Couldn't load track", e);
+            }
+
             this.server.prompt();
         }
 
