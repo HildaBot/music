@@ -59,7 +59,7 @@ public class MusicPlugin extends HildaPlugin {
             lfh.setFormatter(new LogFormat());
             MusicManager.getLogger().addHandler(lfh);
         } catch (final Exception e) {
-            e.printStackTrace();
+            Hilda.getLogger().log(Level.WARNING, "Encountered an exception while initialising music logger", e);
         }
 
         if (Start.DEBUG) {
