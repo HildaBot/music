@@ -35,6 +35,13 @@ public class MusicPlugin extends HildaPlugin {
         Hilda.getLogger().info("Rotating log files in " + Util.getFriendlyTime(rotate));
     }
 
+    @Override
+    public void onDisable() {
+        for (MusicServer server : this.music.getServers()) {
+            server.sendMessage("Sorry, I'm shutting down mid-queue! See you soon.");
+        }
+    }
+
     public void setupLogging() {
         MusicManager.getLogger().setUseParentHandlers(false);
 
