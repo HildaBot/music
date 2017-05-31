@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import ch.jamiete.hilda.Hilda;
+import ch.jamiete.hilda.Util;
 import ch.jamiete.hilda.commands.ChannelSeniorCommand;
 import ch.jamiete.hilda.commands.ChannelSubCommand;
 import ch.jamiete.hilda.music.MusicManager;
@@ -67,7 +68,7 @@ public class MusicQueueCommand extends ChannelSubCommand {
             for (final QueueItem track : tracks) {
                 ms += track.getTrack().getDuration();
             }
-            sb.append(" for ").append(MusicManager.getFriendlyTime(ms));
+            sb.append(" for ").append(Util.getFriendlyTime(ms));
 
             if (tracks.size() != queue.size()) {
                 sb.append("; showing tracks ");

@@ -11,8 +11,9 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.Sanity;
-import ch.jamiete.hilda.music.tasks.MusicStartupCheckerTask;
+import ch.jamiete.hilda.Util;
 import ch.jamiete.hilda.music.tasks.MusicServerChecker;
+import ch.jamiete.hilda.music.tasks.MusicStartupCheckerTask;
 import ch.jamiete.hilda.plugins.HildaPlugin;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.MessageBuilder.Formatting;
@@ -66,44 +67,7 @@ public class MusicManager {
         final StringBuilder sb = new StringBuilder();
 
         if (!("" + track.getDuration()).equalsIgnoreCase("null")) { // TODO Not use a hacky workaround
-            sb.append(MusicManager.getFriendlyTime(track.getDuration()));
-        }
-
-        return sb.toString().trim();
-    }
-
-    public static String getFriendlyTime(long duration) {
-        final StringBuilder sb = new StringBuilder();
-
-        final long days = TimeUnit.MILLISECONDS.toDays(duration);
-        duration -= TimeUnit.DAYS.toMillis(days);
-
-        final long hours = TimeUnit.MILLISECONDS.toHours(duration);
-        duration -= TimeUnit.HOURS.toMillis(hours);
-
-        final long minutes = TimeUnit.MILLISECONDS.toMinutes(duration);
-        duration -= TimeUnit.MINUTES.toMillis(minutes);
-
-        final long seconds = TimeUnit.MILLISECONDS.toSeconds(duration);
-
-        if (days > 0) {
-            sb.append(" ").append(days);
-            sb.append(" ").append(days == 1 ? "day" : "days");
-        }
-
-        if (hours > 0) {
-            sb.append(" ").append(hours);
-            sb.append(" ").append(hours == 1 ? "hour" : "hours");
-        }
-
-        if (minutes > 0) {
-            sb.append(" ").append(minutes);
-            sb.append(" ").append(minutes == 1 ? "minute" : "minutes");
-        }
-
-        if (seconds > 0) {
-            sb.append(" ").append(seconds);
-            sb.append(" ").append(seconds == 1 ? "second" : "seconds");
+            sb.append(Util.getFriendlyTime(track.getDuration()));
         }
 
         return sb.toString().trim();

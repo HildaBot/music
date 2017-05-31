@@ -111,7 +111,7 @@ public class MusicPlayCommand extends ChannelSubCommand {
 
                     time += this.server.getPlayer().getPlayingTrack().getDuration() - this.server.getPlayer().getPlayingTrack().getPosition();
 
-                    sb.append("; playing in ").append(MusicManager.getFriendlyTime(time)).append("!");
+                    sb.append("; playing in ").append(Util.getFriendlyTime(time)).append("!");
                 }
 
                 MusicPlayCommand.this.reply(this.message, sb.toString());
@@ -162,7 +162,7 @@ public class MusicPlayCommand extends ChannelSubCommand {
 
                     time += this.server.getPlayer().getPlayingTrack().getDuration() - this.server.getPlayer().getPlayingTrack().getPosition();
 
-                    sb.append("; playing in ").append(MusicManager.getFriendlyTime(time)).append("!");
+                    sb.append("; playing in ").append(Util.getFriendlyTime(time)).append("!");
                 }
 
                 MusicPlayCommand.this.reply(this.message, sb.toString());
@@ -213,7 +213,7 @@ public class MusicPlayCommand extends ChannelSubCommand {
 
                     time += this.server.getPlayer().getPlayingTrack().getDuration() - this.server.getPlayer().getPlayingTrack().getPosition();
 
-                    sb.append("; playing in ").append(MusicManager.getFriendlyTime(time)).append("!");
+                    sb.append("; playing in ").append(Util.getFriendlyTime(time)).append("!");
                 }
 
                 MusicPlayCommand.this.reply(this.message, sb.toString());
@@ -268,7 +268,7 @@ public class MusicPlayCommand extends ChannelSubCommand {
 
                 time += this.server.getPlayer().getPlayingTrack().getDuration() - this.server.getPlayer().getPlayingTrack().getPosition();
 
-                sb.append("; playing in ").append(MusicManager.getFriendlyTime(time)).append("!");
+                sb.append("; playing in ").append(Util.getFriendlyTime(time)).append("!");
             }
 
             MusicPlayCommand.this.reply(this.message, sb.toString());
