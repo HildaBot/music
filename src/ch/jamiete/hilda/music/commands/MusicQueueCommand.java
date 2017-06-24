@@ -11,6 +11,9 @@ import ch.jamiete.hilda.commands.ChannelSubCommand;
 import ch.jamiete.hilda.music.MusicManager;
 import ch.jamiete.hilda.music.MusicServer;
 import ch.jamiete.hilda.music.QueueItem;
+import net.dv8tion.jda.core.MessageBuilder;
+import net.dv8tion.jda.core.MessageBuilder.Formatting;
+import net.dv8tion.jda.core.MessageBuilder.SplitPolicy;
 import net.dv8tion.jda.core.entities.Message;
 
 public class MusicQueueCommand extends ChannelSubCommand {
@@ -37,10 +40,12 @@ public class MusicQueueCommand extends ChannelSubCommand {
 
         int page = 0;
         final int pageSize = 15;
+        int queue_code = 0;
 
         if (args.length == 1) {
             if (StringUtils.isNumeric(args[0])) {
                 page = Integer.valueOf(args[0]) - 1;
+                queue_code = page * pageSize;
             } else {
                 this.usage(message, "[page]", label);
                 return;
@@ -55,7 +60,7 @@ public class MusicQueueCommand extends ChannelSubCommand {
         }
 
         final List<QueueItem> tracks = this.getPage(queue, page, pageSize);
-        final StringBuilder sb = new StringBuilder();
+        final MessageBuilder sb = new MessageBuilder();
 
         if (tracks.isEmpty()) {
             this.reply(message, "That page is empty.");
@@ -77,13 +82,15 @@ public class MusicQueueCommand extends ChannelSubCommand {
                     sb.append("1–").append(pageSize);
                 } else {
                     final int first = page * pageSize + 1;
-                    sb.append(first).append("–").append(Math.min(first + pageSize, queue.size()) + 1);
+                    sb.append(first).append("–").append(Math.min(first + pageSize - 1, queue.size()));
                 }
             }
 
             sb.append(":").append("\n\n");
 
             for (final QueueItem track : tracks) {
+                sb.append("[" + ++queue_code + "]", Formatting.BLOCK).append(" ");
+
                 sb.append(MusicManager.getFriendly(track.getTrack()));
 
                 final String time = MusicManager.getFriendlyTime(track.getTrack());
@@ -91,7 +98,7 @@ public class MusicQueueCommand extends ChannelSubCommand {
                     sb.append(" (" + time + ")");
                 }
 
-                sb.append(" `").append(message.getGuild().getMemberById(track.getUserId()).getEffectiveName()).append("`");
+                sb.append(" ").append(message.getGuild().getMemberById(track.getUserId()).getEffectiveName(), Formatting.BLOCK);
 
                 sb.append("\n");
             }
@@ -101,7 +108,7 @@ public class MusicQueueCommand extends ChannelSubCommand {
                 sb.append("End of page ").append(page + 1).append("/").append((int) Math.ceil((double) queue.size() / pageSize)).append(".");
             }
 
-            this.reply(message, sb.toString());
+            sb.buildAll(SplitPolicy.NEWLINE).forEach(m -> this.reply(message, m));
         }
     }
 
