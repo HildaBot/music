@@ -44,6 +44,8 @@ public class MusicPlayCommand extends ChannelSubCommand {
                 MusicPlayCommand.this.reply(this.message, "That track is geo-blocked and cannot be played.");
             } else if (e.getMessage().startsWith("This video contains content from")) {
                 MusicPlayCommand.this.reply(this.message, "That track has been restricted by the copyright holder and cannot be played.");
+            } else if (e.getMessage().startsWith("This video is not available")) {
+                MusicPlayCommand.this.reply(this.message, "That track is not available to me and cannot be played.");
             } else {
                 MusicManager.getLogger().log(Level.WARNING, "Couldn't load track", e);
                 MusicPlayCommand.this.reply(this.message, "I couldn't load that track: " + e.getMessage() + ".");
@@ -103,15 +105,7 @@ public class MusicPlayCommand extends ChannelSubCommand {
                     // Something's gone wrong
                     sb.append("; up soon!");
                 } else {
-                    long time = 0;
-
-                    for (final QueueItem item : this.server.getQueue()) {
-                        time += item.getTrack().getDuration();
-                    }
-
-                    time += this.server.getPlayer().getPlayingTrack().getDuration() - this.server.getPlayer().getPlayingTrack().getPosition();
-
-                    sb.append("; playing in ").append(Util.getFriendlyTime(time)).append("!");
+                    sb.append("; playing in ").append(Util.getFriendlyTime(this.server.getDuration())).append("!");
                 }
 
                 MusicPlayCommand.this.reply(this.message, sb.toString());
@@ -154,15 +148,7 @@ public class MusicPlayCommand extends ChannelSubCommand {
                     // Something's gone wrong
                     sb.append("; up soon!");
                 } else {
-                    long time = 0;
-
-                    for (final QueueItem item : this.server.getQueue()) {
-                        time += item.getTrack().getDuration();
-                    }
-
-                    time += this.server.getPlayer().getPlayingTrack().getDuration() - this.server.getPlayer().getPlayingTrack().getPosition();
-
-                    sb.append("; playing in ").append(Util.getFriendlyTime(time)).append("!");
+                    sb.append("; playing in ").append(Util.getFriendlyTime(this.server.getDuration())).append("!");
                 }
 
                 MusicPlayCommand.this.reply(this.message, sb.toString());
@@ -205,15 +191,7 @@ public class MusicPlayCommand extends ChannelSubCommand {
                     // Something's gone wrong
                     sb.append("; up soon!");
                 } else {
-                    long time = 0;
-
-                    for (final QueueItem item : this.server.getQueue()) {
-                        time += item.getTrack().getDuration();
-                    }
-
-                    time += this.server.getPlayer().getPlayingTrack().getDuration() - this.server.getPlayer().getPlayingTrack().getPosition();
-
-                    sb.append("; playing in ").append(Util.getFriendlyTime(time)).append("!");
+                    sb.append("; playing in ").append(Util.getFriendlyTime(this.server.getDuration())).append("!");
                 }
 
                 MusicPlayCommand.this.reply(this.message, sb.toString());
@@ -260,15 +238,7 @@ public class MusicPlayCommand extends ChannelSubCommand {
                 // Something's gone wrong
                 sb.append("; up soon!");
             } else {
-                long time = 0;
-
-                for (final QueueItem item : this.server.getQueue()) {
-                    time += item.getTrack().getDuration();
-                }
-
-                time += this.server.getPlayer().getPlayingTrack().getDuration() - this.server.getPlayer().getPlayingTrack().getPosition();
-
-                sb.append("; playing in ").append(Util.getFriendlyTime(time)).append("!");
+                sb.append("; playing in ").append(Util.getFriendlyTime(this.server.getDuration())).append("!");
             }
 
             MusicPlayCommand.this.reply(this.message, sb.toString());

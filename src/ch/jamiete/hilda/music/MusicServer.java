@@ -92,6 +92,28 @@ public class MusicServer extends AudioEventAdapter implements EventListener {
     }
 
     /**
+     * Gets the remaining time until the queue as it stands will end.
+     * @return The remaining time in ms
+     */
+    public long getDuration() {
+        long duration = 0;
+        final AudioTrack current = this.player.getPlayingTrack();
+
+        duration += current.getDuration() - current.getPosition();
+
+        synchronized (this.queue) {
+            final Iterator<QueueItem> iterator = this.queue.iterator();
+
+            while (iterator.hasNext()) {
+                final QueueItem item = iterator.next();
+                duration += item.getTrack().getDuration();
+            }
+        }
+
+        return duration;
+    }
+
+    /**
      * Gets the guild the server is associated with.
      * @return The guild.
      */
