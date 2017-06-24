@@ -17,6 +17,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import ch.jamiete.hilda.Start;
 import ch.jamiete.hilda.configuration.Configuration;
+import ch.jamiete.hilda.events.EventHandler;
 import ch.jamiete.hilda.music.tasks.MusicLeaveTask;
 import ch.jamiete.hilda.runnables.GameSetTask;
 import net.dv8tion.jda.core.MessageBuilder;
@@ -32,12 +33,11 @@ import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMuteEvent;
 import net.dv8tion.jda.core.exceptions.PermissionException;
-import net.dv8tion.jda.core.hooks.EventListener;
 
 /**
  * This class represents a {@link net.dv8tion.jda.core.entities.Guild Guild} that music is being played on.
  */
-public class MusicServer extends AudioEventAdapter implements EventListener {
+public class MusicServer extends AudioEventAdapter {
     private final MusicManager manager;
     private final AudioPlayer player;
     private Configuration config;
@@ -267,7 +267,7 @@ public class MusicServer extends AudioEventAdapter implements EventListener {
         return this.stopping;
     }
 
-    @Override
+    @EventHandler
     public void onEvent(final Event e) {
         if (this.stopping) {
             return;
