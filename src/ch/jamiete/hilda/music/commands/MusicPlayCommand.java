@@ -1,253 +1,19 @@
 package ch.jamiete.hilda.music.commands;
 
 import java.util.Arrays;
-import java.util.logging.Level;
 import com.google.gson.JsonElement;
-import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
-import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
-import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.Util;
 import ch.jamiete.hilda.commands.ChannelSeniorCommand;
 import ch.jamiete.hilda.commands.ChannelSubCommand;
+import ch.jamiete.hilda.music.LoadResults;
 import ch.jamiete.hilda.music.MusicManager;
 import ch.jamiete.hilda.music.MusicServer;
-import ch.jamiete.hilda.music.QueueItem;
-import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.VoiceChannel;
 
 public class MusicPlayCommand extends ChannelSubCommand {
-
-    private class LoadResults implements AudioLoadResultHandler {
-        private final MusicServer server;
-        private final Message message;
-        private final Member member;
-        private final boolean search;
-
-        public LoadResults(final MusicServer server, final Message message) {
-            this(server, message, false);
-        }
-
-        public LoadResults(final MusicServer server, final Message message, final boolean search) {
-            this.server = server;
-            this.message = message;
-            this.member = message.getGuild().getMember(message.getAuthor());
-            this.search = search;
-        }
-
-        @Override
-        public void loadFailed(final FriendlyException e) {
-            if (e.getMessage().startsWith("The uploader has not made this video available")) {
-                MusicPlayCommand.this.reply(this.message, "That track is geo-blocked and cannot be played.");
-            } else if (e.getMessage().startsWith("This video contains content from")) {
-                MusicPlayCommand.this.reply(this.message, "That track has been restricted by the copyright holder and cannot be played.");
-            } else if (e.getMessage().startsWith("This video is not available")) {
-                MusicPlayCommand.this.reply(this.message, "That track is not available to me and cannot be played.");
-            } else {
-                MusicManager.getLogger().log(Level.WARNING, "Couldn't load track", e);
-                MusicPlayCommand.this.reply(this.message, "I couldn't load that track: " + e.getMessage() + ".");
-                Hilda.getLogger().log(Level.WARNING, "Couldn't load track", e);
-            }
-
-            this.server.prompt();
-        }
-
-        @Override
-        public void noMatches() {
-            MusicManager.getLogger().info("Failed to find anything for query " + this.message.getContent());
-            MusicPlayCommand.this.reply(this.message, "I couldn't find anything matching that query.");
-            this.server.prompt();
-        }
-
-        @Override
-        public void playlistLoaded(final AudioPlaylist playlist) {
-            MusicManager.getLogger().fine("Loaded a playlist");
-
-            if (this.search) {
-                MusicManager.getLogger().fine("Playlist came from a search query!");
-
-                if (this.server.isQueued(playlist.getTracks().get(0))) {
-                    MusicManager.getLogger().fine("Song already queued.");
-                    MusicPlayCommand.this.reply(this.message, "That song is already queued.");
-                    this.server.prompt();
-                    return;
-                }
-
-                if (this.server.isQueueFull()) {
-                    MusicManager.getLogger().fine("Queue full.");
-                    MusicPlayCommand.this.reply(this.message, "There is no space left in the queue!");
-                    this.server.prompt();
-                    return;
-                }
-
-                if (MusicPlayCommand.this.manager.isDJ(message) && playlist.getTracks().get(0).getDuration() > MusicManager.DJ_TIME_LIMIT || !MusicPlayCommand.this.manager.isDJ(message) && playlist.getTracks().get(0).getDuration() > MusicManager.TIME_LIMIT) {
-                    MusicManager.getLogger().fine("Song too long; " + playlist.getTracks().get(0).getDuration() + ">" + MusicManager.TIME_LIMIT + ".");
-                    MusicPlayCommand.this.reply(this.message, "The song is too long to be queued.");
-                    this.server.prompt();
-                    return;
-                }
-
-                if (this.message.getGuild().getSelfMember().hasPermission(this.message.getTextChannel(), Permission.MESSAGE_MANAGE)) {
-                    this.message.delete().queue();
-                }
-
-                MusicManager.getLogger().info("Queueing search result.");
-
-                final StringBuilder sb = new StringBuilder();
-                sb.append("Queued ").append(MusicManager.getFriendly(playlist.getTracks().get(0))).append(" for ").append(this.member.getEffectiveName());
-
-                if (this.server.getPlaying() == null) {
-                    sb.append("; up next!");
-                } else if (this.server.getPlayer().getPlayingTrack() == null) {
-                    // Something's gone wrong
-                    sb.append("; up soon!");
-                } else {
-                    sb.append("; playing in ").append(Util.getFriendlyTime(this.server.getDuration())).append("!");
-                }
-
-                MusicPlayCommand.this.reply(this.message, sb.toString());
-                this.server.queue(new QueueItem(playlist.getTracks().get(0), this.member.getUser().getId()));
-
-                return;
-            }
-
-            if (MusicPlayCommand.this.manager.isDJ(this.message) || this.member.hasPermission(this.message.getTextChannel(), Permission.MANAGE_SERVER)) {
-                MusicManager.getLogger().info("Queuing songs for DJ/admin...");
-                int queued = 0;
-
-                for (final AudioTrack track : playlist.getTracks()) {
-                    if (!this.server.isQueued(track) && !this.server.isQueueFull() && (MusicPlayCommand.this.manager.isDJ(message) && track.getDuration() < MusicManager.DJ_TIME_LIMIT) || (!MusicPlayCommand.this.manager.isDJ(message) && track.getDuration() < MusicManager.TIME_LIMIT)) {
-                        this.server.queue(new QueueItem(track, this.member.getUser().getId()));
-                        queued++;
-                    }
-                }
-
-                if (this.message.getGuild().getSelfMember().hasPermission(this.message.getTextChannel(), Permission.MESSAGE_MANAGE)) {
-                    this.message.delete().queue();
-                }
-
-                final StringBuilder sb = new StringBuilder();
-                sb.append("Queued ");
-
-                MusicPlayCommand.this.reply(this.message, sb.toString());
-
-                if (queued < playlist.getTracks().size()) {
-                    sb.append(queued).append("/").append(playlist.getTracks().size());
-                } else {
-                    sb.append(playlist.getTracks().size());
-                }
-
-                sb.append(" tracks for ").append(this.member.getEffectiveName());
-
-                if (this.server.getPlaying() == null) {
-                    sb.append("; up next!");
-                } else if (this.server.getPlayer().getPlayingTrack() == null) {
-                    // Something's gone wrong
-                    sb.append("; up soon!");
-                } else {
-                    sb.append("; playing in ").append(Util.getFriendlyTime(this.server.getDuration())).append("!");
-                }
-
-                MusicPlayCommand.this.reply(this.message, sb.toString());
-
-                MusicManager.getLogger().info("Queued " + queued + "/" + playlist.getTracks().size());
-            } else {
-                MusicManager.getLogger().fine("Trying to queue first from playlist for non-DJ...");
-
-                if (this.server.isQueued(playlist.getTracks().get(0))) {
-                    MusicManager.getLogger().fine("Song already queued.");
-                    MusicPlayCommand.this.reply(this.message, "That song is already queued.");
-                    this.server.prompt();
-                    return;
-                }
-
-                if (this.server.isQueueFull()) {
-                    MusicManager.getLogger().fine("Queue full");
-                    MusicPlayCommand.this.reply(this.message, "There is no space left in the queue!");
-                    this.server.prompt();
-                    return;
-                }
-
-                if (MusicPlayCommand.this.manager.isDJ(message) && playlist.getTracks().get(0).getDuration() < MusicManager.DJ_TIME_LIMIT || !MusicPlayCommand.this.manager.isDJ(message) && playlist.getTracks().get(0).getDuration() > MusicManager.TIME_LIMIT) {
-                    MusicManager.getLogger().fine("Song too long; " + playlist.getTracks().get(0).getDuration() + ">" + MusicManager.TIME_LIMIT + ".");
-                    MusicPlayCommand.this.reply(this.message, "The song is too long to be queued.");
-                    this.server.prompt();
-                    return;
-                }
-
-                if (this.message.getGuild().getSelfMember().hasPermission(this.message.getTextChannel(), Permission.MESSAGE_MANAGE)) {
-                    this.message.delete().queue();
-                }
-
-                final StringBuilder sb = new StringBuilder();
-                sb.append("Queued ").append(MusicManager.getFriendly(playlist.getTracks().get(0))).append(" for ").append(this.member.getEffectiveName());
-
-                if (this.server.getPlaying() == null) {
-                    sb.append("; up next!");
-                } else if (this.server.getPlayer().getPlayingTrack() == null) {
-                    // Something's gone wrong
-                    sb.append("; up soon!");
-                } else {
-                    sb.append("; playing in ").append(Util.getFriendlyTime(this.server.getDuration())).append("!");
-                }
-
-                MusicPlayCommand.this.reply(this.message, sb.toString());
-                this.server.queue(new QueueItem(playlist.getTracks().get(0), this.member.getUser().getId()));
-                MusicManager.getLogger().info("Queued first from playlist for non-DJ");
-            }
-        }
-
-        @Override
-        public void trackLoaded(final AudioTrack track) {
-            MusicManager.getLogger().fine("Loaded a track");
-
-            if (this.server.isQueued(track)) {
-                MusicManager.getLogger().fine("Song already queued.");
-                MusicPlayCommand.this.reply(this.message, "That song is already queued.");
-                this.server.prompt();
-                return;
-            }
-
-            if (this.server.isQueueFull()) {
-                MusicManager.getLogger().fine("Queue full");
-                MusicPlayCommand.this.reply(this.message, "There is no space left in the queue!");
-                this.server.prompt();
-                return;
-            }
-
-            if (MusicPlayCommand.this.manager.isDJ(message) && track.getDuration() > MusicManager.DJ_TIME_LIMIT || !MusicPlayCommand.this.manager.isDJ(message) && track.getDuration() > MusicManager.TIME_LIMIT) {
-                MusicManager.getLogger().fine("Song too long; " + track.getDuration() + ">" + MusicManager.TIME_LIMIT + ".");
-                MusicPlayCommand.this.reply(this.message, "The song is too long to be queued.");
-                this.server.prompt();
-                return;
-            }
-
-            if (this.message.getGuild().getSelfMember().hasPermission(this.message.getTextChannel(), Permission.MESSAGE_MANAGE)) {
-                this.message.delete().queue();
-            }
-
-            final StringBuilder sb = new StringBuilder();
-            sb.append("Queued ").append(MusicManager.getFriendly(track)).append(" for ").append(this.member.getEffectiveName());
-
-            if (this.server.getPlaying() == null) {
-                sb.append("; up next!");
-            } else if (this.server.getPlayer().getPlayingTrack() == null) {
-                // Something's gone wrong
-                sb.append("; up soon!");
-            } else {
-                sb.append("; playing in ").append(Util.getFriendlyTime(this.server.getDuration())).append("!");
-            }
-
-            MusicPlayCommand.this.reply(this.message, sb.toString());
-            this.server.queue(new QueueItem(track, this.member.getUser().getId()));
-            MusicManager.getLogger().fine("Queued a song");
-        }
-
-    }
-
     private final MusicManager manager;
 
     public MusicPlayCommand(final Hilda hilda, final ChannelSeniorCommand senior, final MusicManager manager) {
@@ -304,7 +70,7 @@ public class MusicPlayCommand extends ChannelSubCommand {
         if (args.length == 1 && args[0].toLowerCase().startsWith("http")) {
             MusicManager.getLogger().info("Attempting to load URL " + args[0]);
             message.getChannel().sendTyping().queue();
-            this.manager.getAudioPlayerManager().loadItemOrdered(server.getPlayer(), args[0], new LoadResults(server, message));
+            this.manager.getAudioPlayerManager().loadItemOrdered(server.getPlayer(), args[0], new LoadResults(server, this.manager, message));
             return;
         }
 
@@ -312,7 +78,7 @@ public class MusicPlayCommand extends ChannelSubCommand {
         final String search = Util.combineSplit(0, args, " ");
         MusicManager.getLogger().info("Attempting to search YouTube for " + search);
         message.getChannel().sendTyping().queue();
-        this.manager.getAudioPlayerManager().loadItemOrdered(server.getPlayer(), "ytsearch:" + search, new LoadResults(server, message, true));
+        this.manager.getAudioPlayerManager().loadItemOrdered(server.getPlayer(), "ytsearch:" + search, new LoadResults(server, this.manager, message, true));
     }
 
 }
