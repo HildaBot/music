@@ -1,5 +1,6 @@
 package ch.jamiete.hilda.music;
 
+import java.util.List;
 import java.util.logging.Level;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
@@ -154,6 +155,11 @@ public class LoadResults implements AudioLoadResultHandler {
             sb.append("; up soon!");
         } else {
             sb.append("; playing in ").append(Util.getFriendlyTime(this.server.getDuration())).append("!");
+        }
+
+        List<QueueItem> queue = this.server.getQueue();
+        if (queue.size() > 0) {
+            sb.append(" (Queue code " + (queue.size() + 1) + ")");
         }
 
         this.reply(sb.toString());
