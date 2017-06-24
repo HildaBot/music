@@ -20,15 +20,13 @@
     
     <groupId>ch.jamiete.hilda</groupId>
     <artifactId>music</artifactId>
-    <version>1.0.0</version>
-    <name>HildaMusic</name>
-    <description>A ping plugin for Hilda.</description>
+    <version>1.0.1</version>
     
     <dependencies>
         <dependency>
             <groupId>ch.jamiete.hilda</groupId>
             <artifactId>Hilda</artifactId>
-            <version>1.0.0</version>
+            <version>1.1.2</version>
         </dependency>
         <dependency>
         	<groupId>com.sedmelluq</groupId>
@@ -73,11 +71,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>ch.jamiete.hilda.ping.Main</mainClass>
-                                </transformer>
-                            </transformers>
+                        	<createDependencyReducedPom>false</createDependencyReducedPom>
                         </configuration>
                     </execution>
                 </executions>
