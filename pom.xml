@@ -20,7 +20,7 @@
     
     <groupId>ch.jamiete.hilda</groupId>
     <artifactId>music</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     
     <dependencies>
         <dependency>
@@ -31,7 +31,7 @@
         <dependency>
         	<groupId>com.sedmelluq</groupId>
         	<artifactId>lavaplayer</artifactId>
-        	<version>1.2.39</version>
+        	<version>1.2.42</version>
         </dependency>
         <dependency>
         	<groupId>com.mpatric</groupId>
