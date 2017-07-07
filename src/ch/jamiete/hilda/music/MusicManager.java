@@ -2,6 +2,7 @@ package ch.jamiete.hilda.music;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
@@ -88,6 +89,7 @@ public class MusicManager {
     private final HildaPlugin plugin;
     private final AudioPlayerManager playerManager;
     private final ArrayList<MusicServer> servers = new ArrayList<MusicServer>();
+    private final HashMap<Long, Long> recent = new HashMap<Long, Long>();
 
     public MusicManager(final Hilda hilda, final HildaPlugin plugin) {
         this.hilda = hilda;
@@ -98,6 +100,14 @@ public class MusicManager {
         AudioSourceManagers.registerLocalSource(this.playerManager);
 
         this.hilda.getExecutor().scheduleAtFixedRate(new MusicServerChecker(this), 15, 5, TimeUnit.MINUTES);
+    }
+
+    public void addRecent(long id) {
+        this.recent.put(id, System.currentTimeMillis());
+    }
+
+    public long getRecent(long id) {
+        return this.recent.containsKey(id) ? this.recent.get(id) : Long.MAX_VALUE;
     }
 
     public void addPlayed() {

@@ -704,6 +704,7 @@ public class MusicServer extends AudioEventAdapter {
             this.guild.getAudioManager().closeAudioConnection();
         }
 
+        this.manager.addRecent(this.guild.getIdLong());
         this.manager.removeServer(this);
     }
 

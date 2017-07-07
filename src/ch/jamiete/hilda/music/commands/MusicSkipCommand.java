@@ -40,6 +40,14 @@ public class MusicSkipCommand extends ChannelSubCommand {
 
         final MusicServer server = this.manager.getServer(message.getGuild());
 
+        if (server == null) {
+            if (System.currentTimeMillis() - this.manager.getRecent(message.getGuild().getIdLong()) >= 60000) {
+                this.reply(message, "There isn't anything playing.");
+            }
+
+            return;
+        }
+
         if (member.getVoiceState().getChannel() != server.getChannel()) {
             MusicManager.getLogger().fine("Rejected command because user not in my voice channel");
             this.reply(message, "You must be in the same voice channel as me to skip.");
