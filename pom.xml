@@ -20,7 +20,7 @@
     
     <groupId>ch.jamiete.hilda</groupId>
     <artifactId>music</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
     
     <dependencies>
         <dependency>
@@ -50,7 +50,7 @@
     
     <build>
         <sourceDirectory>src</sourceDirectory>
-        <finalName>${project.artifactId}</finalName>
+        <finalName>${project.artifactId}-${project.version}</finalName>
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -77,5 +77,11 @@
                 </executions>
             </plugin>
         </plugins>
+        <resources>
+   			<resource>
+      			<directory>src/main/resources</directory>
+      			<filtering>true</filtering>
+   			</resource>
+		</resources>
     </build>
 </project>
