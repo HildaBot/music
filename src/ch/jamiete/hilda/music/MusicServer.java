@@ -579,7 +579,7 @@ public class MusicServer extends AudioEventAdapter {
         }
 
         MusicManager.getLogger().fine("Sending a message; decided to use " + channel.getName() + "...");
-        channel.sendMessage(message.replaceAll("@everyone", "\\@\u200Beveryone")).queue();
+        channel.sendMessage(message.replace("@everyone", "\\@\u200Beveryone").replace("@here", "\\@\u200Bhere")).queue();
     }
 
     /**
