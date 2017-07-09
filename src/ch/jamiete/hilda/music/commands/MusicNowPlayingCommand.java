@@ -3,6 +3,7 @@ package ch.jamiete.hilda.music.commands;
 import java.util.Arrays;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import ch.jamiete.hilda.Hilda;
+import ch.jamiete.hilda.Util;
 import ch.jamiete.hilda.commands.ChannelSeniorCommand;
 import ch.jamiete.hilda.commands.ChannelSubCommand;
 import ch.jamiete.hilda.music.MusicManager;
@@ -37,7 +38,7 @@ public class MusicNowPlayingCommand extends ChannelSubCommand {
         final MessageBuilder mb = new MessageBuilder();
         final QueueItem playing = server.getPlaying();
 
-        mb.append("Now playing ").append(MusicManager.getFriendly(playing.getTrack())).append("\n");
+        mb.append("Now playing ").append(Util.sanitise(MusicManager.getFriendly(playing.getTrack()))).append("\n");
 
         if (playing.getTrack().getInfo().length != 0) {
             mb.append("\n").append("Time: ", Formatting.BOLD);

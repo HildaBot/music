@@ -162,7 +162,7 @@ public class LoadResults implements AudioLoadResultHandler {
             sb.append(" (Queue code " + (queue.size() + 1) + ")");
         }
 
-        this.reply(sb.toString());
+        this.reply(Util.sanitise(sb.toString()));
         this.server.queue(new QueueItem(track, this.member.getUser().getId()));
         MusicManager.getLogger().fine("Queued a song");
     }

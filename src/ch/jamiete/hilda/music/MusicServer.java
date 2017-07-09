@@ -16,6 +16,7 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import ch.jamiete.hilda.Start;
+import ch.jamiete.hilda.Util;
 import ch.jamiete.hilda.configuration.Configuration;
 import ch.jamiete.hilda.events.EventHandler;
 import ch.jamiete.hilda.music.tasks.MusicLeaveTask;
@@ -579,7 +580,7 @@ public class MusicServer extends AudioEventAdapter {
         }
 
         MusicManager.getLogger().fine("Sending a message; decided to use " + channel.getName() + "...");
-        channel.sendMessage(message.replace("@everyone", "\\@\u200Beveryone").replace("@here", "\\@\u200Bhere")).queue();
+        channel.sendMessage(Util.sanitise(message)).queue();
     }
 
     /**
