@@ -18,6 +18,7 @@ import ch.jamiete.hilda.music.tasks.MusicStartupCheckerTask;
 import ch.jamiete.hilda.plugins.HildaPlugin;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.MessageBuilder.Formatting;
+import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
@@ -198,6 +199,10 @@ public class MusicManager {
      */
     public boolean isDJ(final Message message) {
         final Member member = message.getGuild().getMember(message.getAuthor());
+
+        if (member.hasPermission(Permission.ADMINISTRATOR)) {
+            return true;
+        }
 
         for (final Role role : message.getGuild().getRolesByName("dj", true)) {
             if (member.getRoles().contains(role)) {
