@@ -91,7 +91,7 @@ public class MusicQueueCommand extends ChannelSubCommand {
             for (final QueueItem track : tracks) {
                 sb.append("[" + ++queue_code + "]", Formatting.BLOCK).append(" ");
 
-                sb.append(MusicManager.getFriendly(track.getTrack()));
+                sb.append(Util.sanitise(MusicManager.getFriendly(track.getTrack())));
 
                 final String time = MusicManager.getFriendlyTime(track.getTrack());
                 if (time.trim().length() > 0) {

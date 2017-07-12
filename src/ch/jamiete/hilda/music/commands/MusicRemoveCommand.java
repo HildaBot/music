@@ -3,6 +3,7 @@ package ch.jamiete.hilda.music.commands;
 import java.util.Arrays;
 import java.util.List;
 import ch.jamiete.hilda.Hilda;
+import ch.jamiete.hilda.Util;
 import ch.jamiete.hilda.commands.ChannelSeniorCommand;
 import ch.jamiete.hilda.commands.ChannelSubCommand;
 import ch.jamiete.hilda.music.MusicManager;
@@ -69,7 +70,7 @@ public class MusicRemoveCommand extends ChannelSubCommand {
         }
 
         server.unqueue(item);
-        this.reply(message, "OK, I've removed " + MusicManager.getFriendly(item.getTrack()) + " from the queue!");
+        this.reply(message, "OK, I've removed " + Util.sanitise(MusicManager.getFriendly(item.getTrack())) + " from the queue!");
     }
 
 }
