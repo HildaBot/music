@@ -46,7 +46,7 @@ public class MusicPlayCommand extends ChannelSubCommand {
         final Member member = message.getGuild().getMember(message.getAuthor());
 
         if (args.length == 0) {
-            this.usage(message, "<url/query string>", label);
+            this.usage(message, "<url/search query>", label);
             return;
         }
 
