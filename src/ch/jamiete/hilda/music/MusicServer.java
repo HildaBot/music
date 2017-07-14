@@ -76,6 +76,14 @@ public class MusicServer extends AudioEventAdapter {
         this.skips.add(string);
     }
 
+    /**
+     * Gets whether this server is queued to leave.
+     * @return
+     */
+    public boolean isLeaveQueued() {
+        return this.task != null;
+    }
+
     public void setLeave(ScheduledFuture<?> task) {
         this.task = task;
     }
@@ -660,10 +668,15 @@ public class MusicServer extends AudioEventAdapter {
         }
     }
 
-    public void shutdown() {
+    /**
+     * Gets whether it is safe for the bot to shutdown. <p>
+     * This checks whether the bot is in a server with someone sharing a mutual guild. A Discord bug will result in the mutual no longer being able to hear the bot until they rejoin the voice channel.
+     * @return Whether it is safe.
+     */
+    public boolean canShutdown() {
         boolean clash = false;
 
-        for (MusicServer server : this.manager.getServers()) {
+        for (final MusicServer server : this.manager.getServers()) {
             if (server == this || server.getPlayer().getPlayingTrack() == null) {
                 continue;
             }
@@ -675,17 +688,31 @@ public class MusicServer extends AudioEventAdapter {
             }
         }
 
-        if (!clash) {
-            this.shutdownNow();
+        return clash;
+    }
+
+    /**
+     * Queues a bot shutdown.
+     */
+    public void queueShutdown() {
+        this.task = this.manager.getHilda().getExecutor().schedule(new MusicLeaveTask(this), 5, TimeUnit.MINUTES);
+    }
+
+    /**
+     * Will shut the bot down immediately (and leave the voice channel) if possible, or queue a shutdown.
+     */
+    public void shutdown() {
+        if (this.canShutdown()) {
+            this.shutdownNow(true);
         } else {
-            this.task = this.manager.getHilda().getExecutor().schedule(new MusicLeaveTask(this), 5, TimeUnit.MINUTES);
+            this.queueShutdown();
         }
     }
 
     /**
      * Shuts down the bot immediately.
      */
-    public void shutdownNow() {
+    public void shutdownNow(final boolean leave) {
         if (this.stopping) {
             return;
         }
@@ -701,12 +728,18 @@ public class MusicServer extends AudioEventAdapter {
 
         this.setGame(null);
 
-        if (this.guild.getAudioManager().isConnected()) {
+        if (this.guild.getAudioManager().isConnected() && leave) {
             this.guild.getAudioManager().closeAudioConnection();
         }
 
         this.manager.addRecent(this.guild.getIdLong());
         this.manager.removeServer(this);
+
+        for (MusicServer server : this.manager.getServers()) {
+            if (server.isLeaveQueued()) {
+                server.shutdown();
+            }
+        }
     }
 
     /**
