@@ -118,14 +118,24 @@ public class MusicManager {
         this.hilda.getExecutor().scheduleAtFixedRate(new MusicServerChecker(this), 15, 5, TimeUnit.MINUTES);
     }
 
+    /**
+     * Increment the number of songs played this session.
+     */
     public void addPlayed() {
         this.played++;
     }
 
+    /**
+     * Increment the number of songs queued this session.
+     */
     public void addQueued() {
         this.queued++;
     }
 
+    /**
+     * Add a recently shutdown server to the tracker.
+     * @param id The server that recently shutdown.
+     */
     public void addRecent(final long id) {
         this.recent.put(id, System.currentTimeMillis());
     }
@@ -159,6 +169,10 @@ public class MusicManager {
         return this.hilda;
     }
 
+    /**
+     * Get the number of songs played this session.
+     * @return The number of songs played this session.
+     */
     public int getPlayed() {
         return this.played;
     }
@@ -167,10 +181,19 @@ public class MusicManager {
         return this.plugin;
     }
 
+    /**
+     * Get the number of songs queued this session.
+     * @return The number of songs queued this session.
+     */
     public int getQueued() {
         return this.queued;
     }
 
+    /**
+     * Get the time the server last shutdown.
+     * @param id The server to check.
+     * @return The time in milliseconds since the server last shutdown or {@code Long.MAX_VALUE} if it did not recently shutdown.
+     */
     public long getRecent(final long id) {
         return this.recent.containsKey(id) ? this.recent.get(id) : Long.MAX_VALUE;
     }

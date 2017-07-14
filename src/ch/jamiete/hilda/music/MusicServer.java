@@ -122,6 +122,10 @@ public class MusicServer extends AudioEventAdapter {
         return this.channel;
     }
 
+    /**
+     * Gets the configuration for this server.
+     * @return This server's configuration.
+     */
     public Configuration getConfig() {
         return this.config;
     }
