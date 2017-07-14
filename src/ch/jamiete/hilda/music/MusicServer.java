@@ -414,7 +414,6 @@ public class MusicServer extends AudioEventAdapter {
     public void onTrackEnd(final AudioPlayer player, final AudioTrack track, final AudioTrackEndReason endReason) {
         MusicManager.getLogger().fine("Track ended " + track.getIdentifier());
 
-
         if (this.stopping) {
             MusicManager.getLogger().fine("Stopping, so giving up...");
             return;
@@ -422,8 +421,17 @@ public class MusicServer extends AudioEventAdapter {
 
         if (this.queue.isEmpty()) {
             MusicManager.getLogger().fine("Queue was empty...");
-            this.sendMessage("Queue concluded.");
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("Queue concluded.");
+
             this.prompt();
+
+            if (this.isLeaveQueued()) {
+                sb.append(" I'm going to stick around in the voice channel for a bit, but I'll leave soon!");
+            }
+
+            this.sendMessage(sb.toString());
             return;
         }
 
