@@ -1,3 +1,18 @@
+/*******************************************************************************
+ * Copyright 2017 jamietech
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *******************************************************************************/
 package ch.jamiete.hilda.music.commands;
 
 import java.util.List;
@@ -28,7 +43,7 @@ public class MusicAdminCommand extends ChannelSubCommand {
 
     @Override
     public void execute(final Message message, final String[] args, final String label) {
-        Configuration config = this.hilda.getConfigurationManager().getConfiguration(this.manager.getPlugin(), message.getGuild().getId());
+        final Configuration config = this.hilda.getConfigurationManager().getConfiguration(this.manager.getPlugin(), message.getGuild().getId());
 
         if (args.length == 0) {
             this.usage(message, "<output/lock>", label);
@@ -37,12 +52,12 @@ public class MusicAdminCommand extends ChannelSubCommand {
 
         if (args[0].equalsIgnoreCase("output")) {
             if (args.length == 1) { // Provide current value
-                JsonElement output = config.get().get("output");
+                final JsonElement output = config.get().get("output");
 
                 if (output == null) {
                     this.reply(message, "There is no output channel currently forced.");
                 } else {
-                    TextChannel channel = message.getGuild().getTextChannelById(output.getAsString());
+                    final TextChannel channel = message.getGuild().getTextChannelById(output.getAsString());
 
                     if (channel == null) {
                         config.get().remove("output");
@@ -56,7 +71,7 @@ public class MusicAdminCommand extends ChannelSubCommand {
                 if (message.getMentionedChannels().isEmpty()) {
                     this.reply(message, "Please mention the channel you want me to output into.");
                 } else {
-                    TextChannel channel = message.getMentionedChannels().get(0);
+                    final TextChannel channel = message.getMentionedChannels().get(0);
 
                     config.get().addProperty("output", channel.getId());
                     config.save();
@@ -67,12 +82,12 @@ public class MusicAdminCommand extends ChannelSubCommand {
 
         if (args[0].equalsIgnoreCase("lock")) {
             if (args.length == 1) { // Provide current value
-                JsonElement output = config.get().get("lock");
+                final JsonElement output = config.get().get("lock");
 
                 if (output == null) {
                     this.reply(message, "There is no voice channel currently forced.");
                 } else {
-                    VoiceChannel channel = message.getGuild().getVoiceChannelById(output.getAsString());
+                    final VoiceChannel channel = message.getGuild().getVoiceChannelById(output.getAsString());
 
                     if (channel == null) {
                         config.get().remove("lock");
@@ -83,12 +98,12 @@ public class MusicAdminCommand extends ChannelSubCommand {
                     }
                 }
             } else {
-                List<VoiceChannel> channels = message.getGuild().getVoiceChannelsByName(Util.combineSplit(1, args, " "), true);
+                final List<VoiceChannel> channels = message.getGuild().getVoiceChannelsByName(Util.combineSplit(1, args, " "), true);
 
                 if (channels.isEmpty()) {
                     this.reply(message, "I couldn't find any channels matching that name.");
                 } else {
-                    VoiceChannel channel = channels.get(0);
+                    final VoiceChannel channel = channels.get(0);
 
                     config.get().addProperty("lock", channel.getId());
                     config.save();

@@ -1,3 +1,18 @@
+/*******************************************************************************
+ * Copyright 2017 jamietech
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *******************************************************************************/
 package ch.jamiete.hilda.music;
 
 import java.util.ArrayList;
@@ -41,7 +56,7 @@ import net.dv8tion.jda.core.exceptions.PermissionException;
 public class MusicServer extends AudioEventAdapter {
     private final MusicManager manager;
     private final AudioPlayer player;
-    private Configuration config;
+    private final Configuration config;
     private final AudioPlayerSendHandler handler;
 
     private final Guild guild;
@@ -77,15 +92,26 @@ public class MusicServer extends AudioEventAdapter {
     }
 
     /**
-     * Gets whether this server is queued to leave.
-     * @return
+     * Gets whether it is safe for the bot to shutdown. <p>
+     * This checks whether the bot is in a server with someone sharing a mutual guild. A Discord bug will result in the mutual no longer being able to hear the bot until they rejoin the voice channel.
+     * @return Whether it is safe.
      */
-    public boolean isLeaveQueued() {
-        return this.task != null;
-    }
+    public boolean canShutdown() {
+        boolean clash = false;
 
-    public void setLeave(ScheduledFuture<?> task) {
-        this.task = task;
+        for (final MusicServer server : this.manager.getServers()) {
+            if (server == this || server.getPlayer().getPlayingTrack() == null) {
+                continue;
+            }
+
+            for (final Member member : server.getChannel().getMembers().stream().filter(m -> !m.getUser().isBot()).collect(Collectors.toList())) {
+                if (this.guild.getMember(member.getUser()) != null) {
+                    clash = true;
+                }
+            }
+        }
+
+        return clash;
     }
 
     /**
@@ -236,6 +262,14 @@ public class MusicServer extends AudioEventAdapter {
      */
     public boolean hasSkipped(final String string) {
         return this.skips.contains(string);
+    }
+
+    /**
+     * Gets whether this server is queued to leave.
+     * @return
+     */
+    public boolean isLeaveQueued() {
+        return this.task != null;
     }
 
     /**
@@ -538,6 +572,13 @@ public class MusicServer extends AudioEventAdapter {
     }
 
     /**
+     * Queues a bot shutdown.
+     */
+    public void queueShutdown() {
+        this.task = this.manager.getHilda().getExecutor().schedule(new MusicLeaveTask(this), 5, TimeUnit.MINUTES);
+    }
+
+    /**
      * Removes a user ID from the skip list.
      * @param string The user ID to remove.
      */
@@ -553,7 +594,7 @@ public class MusicServer extends AudioEventAdapter {
     public void sendMessage(final String message) {
         TextChannel channel = null;
 
-        JsonElement output = this.config.get().get("output");
+        final JsonElement output = this.config.get().get("output");
 
         if (output != null) {
             channel = this.guild.getTextChannelById(output.getAsString());
@@ -651,6 +692,10 @@ public class MusicServer extends AudioEventAdapter {
         this.lastplaying = set;
     }
 
+    public void setLeave(final ScheduledFuture<?> task) {
+        this.task = task;
+    }
+
     /**
      * Checks whether the song should be skipped.
      * @return Whether the song should be skipped.
@@ -666,36 +711,6 @@ public class MusicServer extends AudioEventAdapter {
         synchronized (this.queue) {
             Collections.shuffle(this.queue);
         }
-    }
-
-    /**
-     * Gets whether it is safe for the bot to shutdown. <p>
-     * This checks whether the bot is in a server with someone sharing a mutual guild. A Discord bug will result in the mutual no longer being able to hear the bot until they rejoin the voice channel.
-     * @return Whether it is safe.
-     */
-    public boolean canShutdown() {
-        boolean clash = false;
-
-        for (final MusicServer server : this.manager.getServers()) {
-            if (server == this || server.getPlayer().getPlayingTrack() == null) {
-                continue;
-            }
-
-            for (Member member : server.getChannel().getMembers().stream().filter(m -> !m.getUser().isBot()).collect(Collectors.toList())) {
-                if (this.guild.getMember(member.getUser()) != null) {
-                    clash = true;
-                }
-            }
-        }
-
-        return clash;
-    }
-
-    /**
-     * Queues a bot shutdown.
-     */
-    public void queueShutdown() {
-        this.task = this.manager.getHilda().getExecutor().schedule(new MusicLeaveTask(this), 5, TimeUnit.MINUTES);
     }
 
     /**
@@ -735,7 +750,7 @@ public class MusicServer extends AudioEventAdapter {
         this.manager.addRecent(this.guild.getIdLong());
         this.manager.removeServer(this);
 
-        for (MusicServer server : this.manager.getServers()) {
+        for (final MusicServer server : this.manager.getServers()) {
             if (server.isLeaveQueued()) {
                 server.shutdown();
             }

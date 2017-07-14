@@ -18,9 +18,9 @@ package ch.jamiete.hilda.music.tasks;
 import ch.jamiete.hilda.music.MusicPlugin;
 
 public class LogRotateTask implements Runnable {
-    private MusicPlugin plugin;
+    private final MusicPlugin plugin;
 
-    public LogRotateTask(MusicPlugin plugin) {
+    public LogRotateTask(final MusicPlugin plugin) {
         this.plugin = plugin;
     }
 
