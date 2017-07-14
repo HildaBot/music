@@ -22,7 +22,7 @@ public class MusicNowPlayingCommand extends ChannelSubCommand {
         this.manager = manager;
 
         this.setName("playing");
-        this.setAliases(Arrays.asList(new String[] { "np", "nowplaying" }));
+        this.setAliases(Arrays.asList(new String[] { "np", "nowplaying", "current" }));
         this.setDescription("Lists information about the song currently playing.");
     }
 
