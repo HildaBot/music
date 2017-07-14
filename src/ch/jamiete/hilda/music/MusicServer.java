@@ -81,6 +81,10 @@ public class MusicServer extends AudioEventAdapter {
         this.guild.getAudioManager().setSendingHandler(this.handler);
         this.config = this.manager.getHilda().getConfigurationManager().getConfiguration(this.manager.getPlugin(), this.guild.getId());
         this.manager.getHilda().getBot().addEventListener(this);
+
+        if (this.manager.getRecent(this.guild.getIdLong()) != Long.MAX_VALUE) {
+            this.manager.removeRecent(this.guild.getIdLong());
+        }
     }
 
     /**

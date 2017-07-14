@@ -252,6 +252,14 @@ public class MusicManager {
     }
 
     /**
+     * Remove the time the server last shutdown.
+     * @param id The server to remove.
+     */
+    public void removeRecent(final long id) {
+        this.recent.remove(id);
+    }
+
+    /**
      * Forgets a server.
      * @param server The server to forget.
      */
