@@ -414,7 +414,6 @@ public class MusicServer extends AudioEventAdapter {
     public void onTrackEnd(final AudioPlayer player, final AudioTrack track, final AudioTrackEndReason endReason) {
         MusicManager.getLogger().fine("Track ended " + track.getIdentifier());
 
-        this.setGame(null);
 
         if (this.stopping) {
             MusicManager.getLogger().fine("Stopping, so giving up...");
