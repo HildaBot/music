@@ -23,6 +23,7 @@ public class MusicBaseCommand extends ChannelSeniorCommand {
         this.registerSubcommand(new MusicResetCommand(hilda, this, manager));
         this.registerSubcommand(new MusicShuffleCommand(hilda, this, manager));
         this.registerSubcommand(new MusicSkipCommand(hilda, this, manager));
+        this.registerSubcommand(new MusicVolumeCommand(hilda, this, manager));
     }
 
 }
