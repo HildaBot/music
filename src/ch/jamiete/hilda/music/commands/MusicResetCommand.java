@@ -45,10 +45,13 @@ public class MusicResetCommand extends ChannelSubCommand {
             return;
         }
 
-        server.shutdown();
-        server.getPlayer().stopTrack();
-        server.prompt();
-        this.reply(message, "Music reset.");
+        if (server.canShutdown()) {
+            server.shutdown();
+            this.reply(message, "Music reset.");
+        } else {
+            server.shutdownNow(false);
+            this.reply(message, "Music reset. I can't leave the channel right now, but the music server has been reset.");
+        }
     }
 
 }
