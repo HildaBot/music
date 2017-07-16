@@ -252,15 +252,7 @@ public class MusicServer extends AudioEventAdapter {
             return 0;
         }
 
-        int users = 0;
-
-        for (final Member member : this.channel.getMembers()) {
-            if (!member.getUser().isBot() && !member.getVoiceState().isDeafened()) {
-                users++;
-            }
-        }
-
-        return users;
+        return (int) this.channel.getMembers().stream().filter(m -> !m.getUser().isBot() && !m.getVoiceState().isDeafened()).count();
     }
 
     /**
