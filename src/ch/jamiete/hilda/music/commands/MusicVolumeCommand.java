@@ -35,7 +35,7 @@ public class MusicVolumeCommand extends ChannelSubCommand {
 
         this.setName("volume");
         this.setAliases(Arrays.asList(new String[] { "v" }));
-        this.setDescription("Shuffles the queue.");
+        this.setDescription("Modifies the volume of the music.");
     }
 
     @Override
