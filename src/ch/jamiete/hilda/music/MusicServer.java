@@ -115,7 +115,7 @@ public class MusicServer extends AudioEventAdapter {
             }
         }
 
-        return clash;
+        return !clash;
     }
 
     /**
