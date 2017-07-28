@@ -55,9 +55,9 @@ public class LoadResults implements AudioLoadResultHandler {
         } else if (e.getMessage().startsWith("This video is not available")) {
             this.reply("That track is not available to me and cannot be played.");
         } else {
-            MusicManager.getLogger().log(Level.WARNING, "Couldn't load track", e);
+            MusicManager.getLogger().log(Level.WARNING, "Couldn't load track in " + MusicManager.getFriendlyGuild(this.message.getGuild()), e);
             this.reply("I couldn't load that track: " + e.getMessage() + ".");
-            Hilda.getLogger().log(Level.WARNING, "Couldn't load track", e);
+            Hilda.getLogger().log(Level.WARNING, "Couldn't load track in " + MusicManager.getFriendlyGuild(this.message.getGuild()), e);
         }
 
         this.server.prompt();

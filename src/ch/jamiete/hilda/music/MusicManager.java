@@ -90,6 +90,10 @@ public class MusicManager {
         return sb.toString().trim();
     }
 
+    public static String getFriendlyGuild(final Guild guild) {
+        return guild.getName() + " (" + guild.getId() + ")";
+    }
+
     /**
      * Gets the {@link Logger} to be used by music commands.
      * @return The {@link Logger}.
