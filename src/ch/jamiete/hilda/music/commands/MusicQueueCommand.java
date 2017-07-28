@@ -82,13 +82,7 @@ public class MusicQueueCommand extends ChannelSubCommand {
         } else {
             sb.append("There ").append(queue.size() == 1 ? "is" : "are").append(" ");
             sb.append(queue.size()).append(" ").append(queue.size() == 1 ? "track" : "tracks");
-            sb.append(" queued");
-
-            long ms = 0;
-            for (final QueueItem track : tracks) {
-                ms += track.getTrack().getDuration();
-            }
-            sb.append(" for ").append(Util.getFriendlyTime(ms));
+            sb.append(" queued for ").append(Util.getFriendlyTime(server.getDuration()));
 
             if (tracks.size() != queue.size()) {
                 sb.append("; showing tracks ");
