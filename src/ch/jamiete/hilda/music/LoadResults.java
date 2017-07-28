@@ -82,12 +82,14 @@ public class LoadResults implements AudioLoadResultHandler {
 
         if (this.manager.isDJ(this.message)) {
             MusicManager.getLogger().info("Queuing songs for DJ/admin...");
+            long duration = 0, previous = server.getDuration();
             int queued = 0;
 
             for (final AudioTrack track : playlist.getTracks()) {
                 if (!this.server.isQueued(track) && !this.server.isQueueFull() && (this.manager.isDJ(this.message) && track.getDuration() < MusicManager.DJ_TIME_LIMIT || !this.manager.isDJ(this.message) && track.getDuration() < MusicManager.TIME_LIMIT)) {
                     this.server.queue(new QueueItem(track, this.member.getUser().getId()));
                     queued++;
+                    duration += track.getDuration();
                 }
             }
 
@@ -106,17 +108,17 @@ public class LoadResults implements AudioLoadResultHandler {
 
             sb.append(" tracks for ").append(this.member.getEffectiveName());
 
-            if (this.server.getPlaying() == null) {
-                sb.append("; up next!");
-            } else if (this.server.getPlayer().getPlayingTrack() == null) {
+            if (this.server.getPlaying() == null || this.server.getPlayer().getPlayingTrack() == null) {
                 // Something's gone wrong
                 sb.append("; up soon!");
+            } else if (this.server.getPlaying().getTrack() == playlist.getTracks().get(0)) {
+                sb.append("; up now! Playing for ").append(Util.getFriendlyTime(duration)).append(".");
             } else {
-                sb.append("; playing in ").append(Util.getFriendlyTime(this.server.getDuration())).append("!");
+                sb.append("; playing for").append(Util.getFriendlyTime(duration));
+                sb.append(" in ").append(Util.getFriendlyTime(previous)).append("!");
             }
 
             this.reply(sb.toString());
-
             MusicManager.getLogger().info("Queued " + queued + "/" + playlist.getTracks().size());
         } else {
             MusicManager.getLogger().fine("Trying to queue first from playlist for non-DJ...");
