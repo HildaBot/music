@@ -85,7 +85,7 @@ public class LoadResults implements AudioLoadResultHandler {
             int queued = 0;
 
             for (final AudioTrack track : playlist.getTracks()) {
-                if (!this.server.isQueued(track) && !this.server.isQueueFull() && this.manager.isDJ(this.message) && track.getDuration() < MusicManager.DJ_TIME_LIMIT || !this.manager.isDJ(this.message) && track.getDuration() < MusicManager.TIME_LIMIT) {
+                if (!this.server.isQueued(track) && !this.server.isQueueFull() && (this.manager.isDJ(this.message) && track.getDuration() < MusicManager.DJ_TIME_LIMIT || !this.manager.isDJ(this.message) && track.getDuration() < MusicManager.TIME_LIMIT)) {
                     this.server.queue(new QueueItem(track, this.member.getUser().getId()));
                     queued++;
                 }
