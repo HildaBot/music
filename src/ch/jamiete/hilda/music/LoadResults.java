@@ -80,7 +80,7 @@ public class LoadResults implements AudioLoadResultHandler {
             return;
         }
 
-        if (this.manager.isDJ(this.message) || this.member.hasPermission(this.message.getTextChannel(), Permission.MANAGE_SERVER)) {
+        if (this.manager.isDJ(this.message)) {
             MusicManager.getLogger().info("Queuing songs for DJ/admin...");
             int queued = 0;
 

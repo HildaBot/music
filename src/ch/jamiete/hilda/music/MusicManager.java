@@ -238,7 +238,7 @@ public class MusicManager {
     public boolean isDJ(final Message message) {
         final Member member = message.getGuild().getMember(message.getAuthor());
 
-        if (member.hasPermission(Permission.ADMINISTRATOR)) {
+        if (member.hasPermission(Permission.ADMINISTRATOR) || member.hasPermission(Permission.MANAGE_SERVER)) {
             return true;
         }
 
