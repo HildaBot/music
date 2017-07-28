@@ -68,12 +68,12 @@ public class MusicVolumeCommand extends ChannelSubCommand {
         try {
             volume = Integer.parseInt(args[0]);
         } catch (final Exception e) {
-            this.usage(message, "[volume 0/100]");
+            this.usage(message, "[volume 0–150]");
             return;
         }
 
-        if (volume > 100) {
-            this.reply(message, "You cannot set the volume higher than 100%.");
+        if (volume > 150) {
+            this.reply(message, "You cannot set the volume higher than 150%.");
             return;
         }
 
