@@ -114,7 +114,7 @@ public class LoadResults implements AudioLoadResultHandler {
             } else if (this.server.getPlaying().getTrack() == playlist.getTracks().get(0)) {
                 sb.append("; up now! Playing for ").append(Util.getFriendlyTime(duration)).append(".");
             } else {
-                sb.append("; playing for").append(Util.getFriendlyTime(duration));
+                sb.append("; playing for ").append(Util.getFriendlyTime(duration));
                 sb.append(" in ").append(Util.getFriendlyTime(previous)).append("!");
             }
 
