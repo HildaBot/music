@@ -758,6 +758,10 @@ public class MusicServer extends AudioEventAdapter {
         this.manager.removeServer(this);
 
         for (final MusicServer server : this.manager.getServers()) {
+            if (server == this) {
+                continue;
+            }
+
             if (server.isLeaveQueued()) {
                 server.shutdown();
             }
