@@ -154,7 +154,10 @@ public class MusicManager {
         Sanity.truthiness(!this.hasServer(guild), "A server with the guild " + guild.getId() + " already exists.");
 
         final MusicServer server = new MusicServer(this, this.playerManager.createPlayer(), guild);
-        this.servers.add(server);
+
+        synchronized (this.servers) {
+            this.servers.add(server);
+        }
 
         this.hilda.getExecutor().schedule(new MusicStartupCheckerTask(server), 90, TimeUnit.SECONDS);
 
@@ -208,9 +211,11 @@ public class MusicManager {
      * @return The {@link MusicServer} related to the guild or {@code null} if no server exists.
      */
     public MusicServer getServer(final Guild guild) {
-        for (final MusicServer server : this.servers) {
-            if (server.getGuild() == guild) {
-                return server;
+        synchronized (this.servers) {
+            for (final MusicServer server : this.servers) {
+                if (server.getGuild() == guild) {
+                    return server;
+                }
             }
         }
 
@@ -222,7 +227,9 @@ public class MusicManager {
      * @return A {@link MusicServer} array containing all registered servers.
      */
     public List<MusicServer> getServers() {
-        return Collections.unmodifiableList(this.servers);
+        synchronized (this.servers) {
+            return Collections.unmodifiableList(this.servers);
+        }
     }
 
     /**
@@ -268,7 +275,9 @@ public class MusicManager {
      * @param server The server to forget.
      */
     public void removeServer(final MusicServer server) {
-        this.servers.remove(server);
+        synchronized (this.servers) {
+            this.servers.remove(server);
+        }
     }
 
 }
