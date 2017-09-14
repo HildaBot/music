@@ -142,7 +142,9 @@ public class MusicServer extends AudioEventAdapter {
         long duration = 0;
         final AudioTrack current = this.player.getPlayingTrack();
 
-        duration += current.getDuration() - current.getPosition();
+        if (current != null) {
+            duration += current.getDuration() - current.getPosition();
+        }
 
         synchronized (this.queue) {
             final Iterator<QueueItem> iterator = this.queue.iterator();
@@ -620,8 +622,8 @@ public class MusicServer extends AudioEventAdapter {
         }
 
         if (channel == null) {
-            if (this.guild.getPublicChannel().canTalk()) {
-                channel = this.guild.getPublicChannel();
+            if (this.guild.getDefaultChannel().canTalk()) {
+                channel = this.guild.getDefaultChannel();
             } else {
                 final Optional<TextChannel> chan = this.guild.getTextChannels().stream().filter(c -> c.canTalk()).findFirst();
 
