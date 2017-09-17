@@ -75,6 +75,10 @@ public class MusicManager {
         return mb.build().getContent().trim();
     }
 
+    public static String getFriendlyGuild(final Guild guild) {
+        return guild.getName() + " (" + guild.getId() + ")";
+    }
+
     /**
      * Converts an {@link AudioTrack} to a human-readable {@link String} containing the time of the track.
      * @param track The track to convert.
@@ -88,10 +92,6 @@ public class MusicManager {
         }
 
         return sb.toString().trim();
-    }
-
-    public static String getFriendlyGuild(final Guild guild) {
-        return guild.getName() + " (" + guild.getId() + ")";
     }
 
     /**

@@ -420,7 +420,7 @@ public class MusicServer extends AudioEventAdapter {
         if (this.queue.isEmpty()) {
             MusicManager.getLogger().fine("Queue was empty...");
 
-            StringBuilder sb = new StringBuilder();
+            final StringBuilder sb = new StringBuilder();
             sb.append("Queue concluded.");
 
             this.prompt();

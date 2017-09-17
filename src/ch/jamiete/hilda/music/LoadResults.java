@@ -82,7 +82,8 @@ public class LoadResults implements AudioLoadResultHandler {
 
         if (this.manager.isDJ(this.message)) {
             MusicManager.getLogger().info("Queuing songs for DJ/admin...");
-            long duration = 0, previous = server.getDuration();
+            long duration = 0;
+            final long previous = this.server.getDuration();
             int queued = 0;
 
             for (final AudioTrack track : playlist.getTracks()) {

@@ -44,7 +44,7 @@ public class MusicLogFormat extends Formatter {
 
         if (record.getThrown() != null) {
             /*log += "\n" + record.getThrown().getMessage();
-
+            
             for (StackTraceElement element : record.getThrown().getStackTrace()) {
                 log += "\n" + element.toString();
             }*/
