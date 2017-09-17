@@ -753,7 +753,7 @@ public class MusicServer extends AudioEventAdapter {
         this.setGame(null);
 
         if (this.guild.getAudioManager().isConnected() && leave) {
-            this.guild.getAudioManager().closeAudioConnection();
+            this.manager.getHilda().getExecutor().execute(() -> this.guild.getAudioManager().closeAudioConnection());
         }
 
         this.manager.addRecent(this.guild.getIdLong());
