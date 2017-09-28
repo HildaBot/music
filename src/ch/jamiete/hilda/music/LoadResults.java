@@ -95,7 +95,7 @@ public class LoadResults implements AudioLoadResultHandler {
             }
 
             if (this.message.getGuild().getSelfMember().hasPermission(this.message.getTextChannel(), Permission.MESSAGE_MANAGE)) {
-                this.message.delete().queue();
+                this.message.delete().reason("I automatically delete some command invocations. If you don't want this to happen, remove my manage messages permission in the channel.").queue();
             }
 
             final StringBuilder sb = new StringBuilder();
@@ -160,7 +160,7 @@ public class LoadResults implements AudioLoadResultHandler {
         }
 
         if (this.message.getGuild().getSelfMember().hasPermission(this.message.getTextChannel(), Permission.MESSAGE_MANAGE)) {
-            this.message.delete().queue();
+            this.message.delete().reason("I automatically delete some command invocations. If you don't want this to happen, remove my manage messages permission in the channel.").queue();
         }
 
         final StringBuilder sb = new StringBuilder();
