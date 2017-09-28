@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * Copyright 2017 jamietech
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *******************************************************************************/
+ */
 package ch.jamiete.hilda.music;
 
 import java.io.File;
@@ -56,7 +56,7 @@ public class MusicPlugin extends HildaPlugin {
         this.getHilda().getCommandManager().registerChannelCommand(new MusicBaseCommand(this.getHilda(), this.music));
         this.setupLogging();
 
-        final long rotate = this.getHilda().getNextMidnightInMillis("GMT+10") - System.currentTimeMillis();
+        final long rotate = Util.getNextMidnightInMillis("GMT+10") - System.currentTimeMillis();
         this.getHilda().getExecutor().scheduleAtFixedRate(new LogRotateTask(this), rotate, 86400000, TimeUnit.MILLISECONDS); // At midnight then every 24 hours
         Hilda.getLogger().info("Rotating log files in " + Util.getFriendlyTime(rotate));
     }
