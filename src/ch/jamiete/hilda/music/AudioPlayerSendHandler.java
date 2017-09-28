@@ -24,7 +24,7 @@ import net.dv8tion.jda.core.audio.AudioSendHandler;
  * @author sedmelluq
  * https://github.com/sedmelluq/lavaplayer/blob/master/demo-jda/src/main/java/com/sedmelluq/discord/lavaplayer/demo/jda/AudioPlayerSendHandler.java
  */
-public class AudioPlayerSendHandler implements AudioSendHandler {
+class AudioPlayerSendHandler implements AudioSendHandler {
     private final AudioPlayer audioPlayer;
     private AudioFrame lastFrame;
 

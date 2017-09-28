@@ -108,8 +108,8 @@ public class MusicManager {
     private final Hilda hilda;
     private final HildaPlugin plugin;
     private final AudioPlayerManager playerManager;
-    private final ArrayList<MusicServer> servers = new ArrayList<MusicServer>();
-    private final HashMap<Long, Long> recent = new HashMap<Long, Long>();
+    private final ArrayList<MusicServer> servers = new ArrayList<>();
+    private final HashMap<Long, Long> recent = new HashMap<>();
 
     public MusicManager(final Hilda hilda, final HildaPlugin plugin) {
         this.hilda = hilda;
@@ -202,7 +202,7 @@ public class MusicManager {
      * @return The time in milliseconds since the server last shutdown or {@code Long.MAX_VALUE} if it did not recently shutdown.
      */
     public long getRecent(final long id) {
-        return this.recent.containsKey(id) ? this.recent.get(id) : Long.MAX_VALUE;
+        return this.recent.getOrDefault(id, Long.MAX_VALUE);
     }
 
     /**

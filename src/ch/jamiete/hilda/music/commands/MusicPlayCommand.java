@@ -28,7 +28,7 @@ import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.VoiceChannel;
 
-public class MusicPlayCommand extends ChannelSubCommand {
+class MusicPlayCommand extends ChannelSubCommand {
     private final MusicManager manager;
 
     public MusicPlayCommand(final Hilda hilda, final ChannelSeniorCommand senior, final MusicManager manager) {
@@ -37,7 +37,7 @@ public class MusicPlayCommand extends ChannelSubCommand {
         this.manager = manager;
 
         this.setName("play");
-        this.setAliases(Arrays.asList(new String[] { "search", "p" }));
+        this.setAliases(Arrays.asList("search", "p"));
         this.setDescription("Queues a sound file to be played. Accepts URLs or YouTube search queries.");
     }
 

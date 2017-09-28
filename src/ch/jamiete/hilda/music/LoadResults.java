@@ -177,7 +177,7 @@ public class LoadResults implements AudioLoadResultHandler {
 
         final List<QueueItem> queue = this.server.getQueue();
         if (queue.size() > 0) {
-            sb.append(" (Queue code " + (queue.size() + 1) + ")");
+            sb.append(" (Queue code ").append(queue.size() + 1).append(")");
         }
 
         this.reply(Util.sanitise(sb.toString()));

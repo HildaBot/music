@@ -15,7 +15,7 @@
  */
 package ch.jamiete.hilda.music.commands;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.Util;
@@ -27,7 +27,7 @@ import ch.jamiete.hilda.music.QueueItem;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 
-public class MusicRemoveCommand extends ChannelSubCommand {
+class MusicRemoveCommand extends ChannelSubCommand {
     private final MusicManager manager;
 
     public MusicRemoveCommand(final Hilda hilda, final ChannelSeniorCommand senior, final MusicManager manager) {
@@ -36,7 +36,7 @@ public class MusicRemoveCommand extends ChannelSubCommand {
         this.manager = manager;
 
         this.setName("remove");
-        this.setAliases(Arrays.asList(new String[] { "unqueue" }));
+        this.setAliases(Collections.singletonList("unqueue"));
         this.setDescription("Removes a song from the queue.");
     }
 

@@ -28,7 +28,7 @@ import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.VoiceChannel;
 
-public class MusicAdminCommand extends ChannelSubCommand {
+class MusicAdminCommand extends ChannelSubCommand {
     private final MusicManager manager;
 
     public MusicAdminCommand(final Hilda hilda, final ChannelSeniorCommand senior, final MusicManager manager) {

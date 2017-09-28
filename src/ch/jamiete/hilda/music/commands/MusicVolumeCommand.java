@@ -15,7 +15,8 @@
  */
 package ch.jamiete.hilda.music.commands;
 
-import java.util.Arrays;
+import java.util.Collections;
+
 import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.commands.ChannelSeniorCommand;
 import ch.jamiete.hilda.commands.ChannelSubCommand;
@@ -25,7 +26,7 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 
-public class MusicVolumeCommand extends ChannelSubCommand {
+class MusicVolumeCommand extends ChannelSubCommand {
     private final MusicManager manager;
 
     public MusicVolumeCommand(final Hilda hilda, final ChannelSeniorCommand senior, final MusicManager manager) {
@@ -34,7 +35,7 @@ public class MusicVolumeCommand extends ChannelSubCommand {
         this.manager = manager;
 
         this.setName("volume");
-        this.setAliases(Arrays.asList(new String[] { "v" }));
+        this.setAliases(Collections.singletonList("v"));
         this.setDescription("Modifies the volume of the music.");
     }
 
@@ -63,7 +64,7 @@ public class MusicVolumeCommand extends ChannelSubCommand {
             return;
         }
 
-        int volume = 0;
+        int volume;
 
         try {
             volume = Integer.parseInt(args[0]);

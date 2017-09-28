@@ -17,7 +17,6 @@ package ch.jamiete.hilda.music;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ScheduledFuture;
@@ -30,7 +29,6 @@ import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
-import ch.jamiete.hilda.Start;
 import ch.jamiete.hilda.Util;
 import ch.jamiete.hilda.configuration.Configuration;
 import ch.jamiete.hilda.events.EventHandler;
@@ -57,7 +55,6 @@ public class MusicServer extends AudioEventAdapter {
     private final MusicManager manager;
     private final AudioPlayer player;
     private final Configuration config;
-    private final AudioPlayerSendHandler handler;
 
     private final Guild guild;
     private VoiceChannel channel;
@@ -66,7 +63,7 @@ public class MusicServer extends AudioEventAdapter {
     private ScheduledFuture<?> task;
 
     private final List<QueueItem> queue = Collections.synchronizedList(new ArrayList<QueueItem>());
-    private final ArrayList<String> skips = new ArrayList<String>();
+    private final ArrayList<String> skips = new ArrayList<>();
 
     private QueueItem now;
 
@@ -76,9 +73,8 @@ public class MusicServer extends AudioEventAdapter {
         this.manager = manager;
         this.player = player;
         this.player.addListener(this);
-        this.handler = new AudioPlayerSendHandler(player);
         this.guild = guild;
-        this.guild.getAudioManager().setSendingHandler(this.handler);
+        this.guild.getAudioManager().setSendingHandler(new AudioPlayerSendHandler(player));
         this.config = this.manager.getHilda().getConfigurationManager().getConfiguration(this.manager.getPlugin(), this.guild.getId());
         this.manager.getHilda().getBot().addEventListener(this);
 
@@ -147,10 +143,7 @@ public class MusicServer extends AudioEventAdapter {
         }
 
         synchronized (this.queue) {
-            final Iterator<QueueItem> iterator = this.queue.iterator();
-
-            while (iterator.hasNext()) {
-                final QueueItem item = iterator.next();
+            for (QueueItem item : this.queue) {
                 duration += item.getTrack().getDuration();
             }
         }
@@ -197,15 +190,11 @@ public class MusicServer extends AudioEventAdapter {
      * For example: [track=afds909,user=034092if09i]
      * @return The list of queue items.
      */
-    public String getQueueNames() {
+    private String getQueueNames() {
         final StringBuilder sb = new StringBuilder();
 
         synchronized (this.queue) {
-            final Iterator<QueueItem> iterator = this.queue.iterator();
-
-            while (iterator.hasNext()) {
-                final QueueItem q = iterator.next();
-
+            for (QueueItem q : this.queue) {
                 sb.append("[").append("track=");
                 sb.append(q.getTrack().getIdentifier()).append(", ");
                 sb.append("user=").append(q.getUserId());
@@ -219,9 +208,9 @@ public class MusicServer extends AudioEventAdapter {
     /**
      * Helper method. <br>
      * Returns the self user of the bot in member form.
-     * @return
+     * @return self user of bot
      */
-    public Member getSelf() {
+    private Member getSelf() {
         return this.guild.getMember(this.manager.getHilda().getBot().getSelfUser());
     }
 
@@ -237,7 +226,7 @@ public class MusicServer extends AudioEventAdapter {
      * Gets the friendly name of the current song playing. If there is no song playing returns null.
      * @return the friendly name of the current song.
      */
-    public String getSong() {
+    private String getSong() {
         if (this.now == null) {
             return null;
         }
@@ -250,7 +239,7 @@ public class MusicServer extends AudioEventAdapter {
      * @return The number of users in the server's channel that are not bots and are not defeaned.
      */
     public int getUsers() {
-        if (this.channel == null || this.channel != null && this.channel.getMembers() == null) {
+        if (this.channel == null || this.channel.getMembers() == null) {
             return 0;
         }
 
@@ -268,9 +257,9 @@ public class MusicServer extends AudioEventAdapter {
 
     /**
      * Gets whether this server is queued to leave.
-     * @return
+     * @return whether leave queued
      */
-    public boolean isLeaveQueued() {
+    private boolean isLeaveQueued() {
         return this.task != null;
     }
 
@@ -285,9 +274,8 @@ public class MusicServer extends AudioEventAdapter {
         }
 
         synchronized (this.queue) {
-            final Iterator<QueueItem> iterator = this.queue.iterator();
-            while (iterator.hasNext()) {
-                if (track.getIdentifier().equalsIgnoreCase(iterator.next().getTrack().getIdentifier())) {
+            for (QueueItem aQueue : this.queue) {
+                if (track.getIdentifier().equalsIgnoreCase(aQueue.getTrack().getIdentifier())) {
                     return true;
                 }
             }
@@ -435,7 +423,13 @@ public class MusicServer extends AudioEventAdapter {
 
         if (this.isQueued(track)) {
             MusicManager.getLogger().fine("Track was still in queue; deleting.");
-            this.queue.remove(track);
+            synchronized (this.queue) {
+                for (QueueItem item : this.queue) {
+                    if (item.getTrack().equals(track)) {
+                        this.queue.remove(item);
+                    }
+                }
+            }
         }
 
         if (endReason.mayStartNext || endReason == AudioTrackEndReason.STOPPED) {
@@ -508,17 +502,8 @@ public class MusicServer extends AudioEventAdapter {
             this.setGame(this.getSong());
         }
 
-        if (this.isQueued(item.getTrack())) {
+        if (item != null && this.isQueued(item.getTrack())) {
             this.queue.remove(item);
-        }
-
-        if (Start.DEBUG) {
-            final StringBuilder sb = new StringBuilder();
-
-            sb.append("There are ").append(this.queue.size()).append(" songs queued: ");
-            sb.append(this.getQueueNames());
-
-            MusicManager.getLogger().fine(sb.toString());
         }
     }
 
@@ -554,7 +539,7 @@ public class MusicServer extends AudioEventAdapter {
      * @param queue The item to queue.
      * @param front Whether the item should be placed at the top of the queue.
      */
-    public void queue(final QueueItem queue, final boolean front) {
+    private void queue(final QueueItem queue, final boolean front) {
         MusicManager.getLogger().fine("Queueing " + queue);
 
         if (this.now == null) {
@@ -569,21 +554,12 @@ public class MusicServer extends AudioEventAdapter {
         }
 
         this.manager.addQueued();
-
-        if (Start.DEBUG) {
-            final StringBuilder sb = new StringBuilder();
-
-            sb.append("There are ").append(this.queue.size()).append(" songs queued: ");
-            sb.append(this.getQueueNames());
-
-            MusicManager.getLogger().fine(sb.toString());
-        }
     }
 
     /**
      * Queues a bot shutdown.
      */
-    public void queueShutdown() {
+    private void queueShutdown() {
         this.task = this.manager.getHilda().getExecutor().schedule(new MusicLeaveTask(this), 5, TimeUnit.MINUTES);
     }
 
@@ -591,14 +567,14 @@ public class MusicServer extends AudioEventAdapter {
      * Removes a user ID from the skip list.
      * @param string The user ID to remove.
      */
-    public void removeSkip(final String string) {
+    private void removeSkip(final String string) {
         this.skips.remove(string);
     }
 
     /**
      * Attempts to send a message. The bot will try the following channels in order: "bot", "bots", the default channel, the first channel that can be messaged.
      * The bot will pick the first of these that it can send a message to. If the bot cannot find any channels it will shutdown.
-     * @param message
+     * @param message The message to send
      */
     public void sendMessage(final String message) {
         TextChannel channel = null;
@@ -625,7 +601,7 @@ public class MusicServer extends AudioEventAdapter {
             if (this.guild.getDefaultChannel().canTalk()) {
                 channel = this.guild.getDefaultChannel();
             } else {
-                final Optional<TextChannel> chan = this.guild.getTextChannels().stream().filter(c -> c.canTalk()).findFirst();
+                final Optional<TextChannel> chan = this.guild.getTextChannels().stream().filter(TextChannel::canTalk).findFirst();
 
                 if (chan.isPresent()) {
                     channel = chan.get();
@@ -691,7 +667,7 @@ public class MusicServer extends AudioEventAdapter {
 
         if (set == null) {
             if (game != null && game.getName().equalsIgnoreCase(this.lastplaying) && (this.queue.isEmpty() || this.stopping)) {
-                this.manager.getHilda().getExecutor().execute(new GameSetTask(this.manager.getHilda(), set));
+                this.manager.getHilda().getExecutor().execute(new GameSetTask(this.manager.getHilda(), null));
             }
 
             this.lastplaying = null;

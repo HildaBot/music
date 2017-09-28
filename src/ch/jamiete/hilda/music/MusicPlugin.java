@@ -77,8 +77,8 @@ public class MusicPlugin extends HildaPlugin {
         try {
             final File file = new File("log");
 
-            if (!file.isDirectory()) {
-                file.mkdir();
+            if (!file.isDirectory() && !file.mkdir()) {
+                MusicManager.getLogger().warning("Attempted to make a folder but failed. Something might go wrong.");
             }
 
             final FileHandler lfh = new FileHandler("log/hilda_music_" + new SimpleDateFormat("dd-MM-yyyy").format(Calendar.getInstance().getTime()) + ".log", true);

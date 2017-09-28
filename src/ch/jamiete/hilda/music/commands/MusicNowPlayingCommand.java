@@ -28,7 +28,7 @@ import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.MessageBuilder.Formatting;
 import net.dv8tion.jda.core.entities.Message;
 
-public class MusicNowPlayingCommand extends ChannelSubCommand {
+class MusicNowPlayingCommand extends ChannelSubCommand {
     private final MusicManager manager;
 
     public MusicNowPlayingCommand(final Hilda hilda, final ChannelSeniorCommand senior, final MusicManager manager) {
@@ -37,7 +37,7 @@ public class MusicNowPlayingCommand extends ChannelSubCommand {
         this.manager = manager;
 
         this.setName("playing");
-        this.setAliases(Arrays.asList(new String[] { "np", "nowplaying", "current" }));
+        this.setAliases(Arrays.asList("np", "nowplaying", "current"));
         this.setDescription("Lists information about the song currently playing.");
     }
 
@@ -45,7 +45,7 @@ public class MusicNowPlayingCommand extends ChannelSubCommand {
     public void execute(final Message message, final String[] args, final String label) {
         final MusicServer server = this.manager.getServer(message.getGuild());
 
-        if (server == null || server != null && server.getPlaying() == null) {
+        if (server == null || server.getPlaying() == null) {
             this.reply(message, "There isn't anything playing.");
             return;
         }

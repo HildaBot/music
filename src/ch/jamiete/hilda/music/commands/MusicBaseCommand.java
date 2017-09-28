@@ -15,7 +15,8 @@
  */
 package ch.jamiete.hilda.music.commands;
 
-import java.util.Arrays;
+import java.util.Collections;
+
 import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.commands.ChannelSeniorCommand;
 import ch.jamiete.hilda.music.MusicManager;
@@ -26,7 +27,7 @@ public class MusicBaseCommand extends ChannelSeniorCommand {
         super(hilda);
 
         this.setName("music");
-        this.setAliases(Arrays.asList(new String[] { "m" }));
+        this.setAliases(Collections.singletonList("m"));
         this.setDescription("Manages the music player.");
 
         this.registerSubcommand(new MusicAdminCommand(hilda, this, manager));

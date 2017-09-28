@@ -31,7 +31,7 @@ import net.dv8tion.jda.core.MessageBuilder.Formatting;
 import net.dv8tion.jda.core.MessageBuilder.SplitPolicy;
 import net.dv8tion.jda.core.entities.Message;
 
-public class MusicQueueCommand extends ChannelSubCommand {
+class MusicQueueCommand extends ChannelSubCommand {
     private final MusicManager manager;
 
     public MusicQueueCommand(final Hilda hilda, final ChannelSeniorCommand senior, final MusicManager manager) {
@@ -40,7 +40,7 @@ public class MusicQueueCommand extends ChannelSubCommand {
         this.manager = manager;
 
         this.setName("queue");
-        this.setAliases(Arrays.asList(new String[] { "page", "q" }));
+        this.setAliases(Arrays.asList("page", "q"));
         this.setDescription("Lists the current queue.");
     }
 
@@ -104,7 +104,7 @@ public class MusicQueueCommand extends ChannelSubCommand {
 
                 final String time = MusicManager.getFriendlyTime(track.getTrack());
                 if (time.trim().length() > 0) {
-                    sb.append(" (" + time + ")");
+                    sb.append(" (").append(time).append(")");
                 }
 
                 sb.append(" ").append(message.getGuild().getMemberById(track.getUserId()).getEffectiveName(), Formatting.BLOCK);

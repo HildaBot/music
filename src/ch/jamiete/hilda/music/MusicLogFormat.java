@@ -21,7 +21,7 @@ import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
-public class MusicLogFormat extends Formatter {
+class MusicLogFormat extends Formatter {
     private final SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd kk:mm:ss");
 
     @Override

@@ -15,7 +15,8 @@
  */
 package ch.jamiete.hilda.music.commands;
 
-import java.util.Arrays;
+import java.util.Collections;
+
 import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.commands.ChannelSeniorCommand;
 import ch.jamiete.hilda.commands.ChannelSubCommand;
@@ -24,7 +25,7 @@ import ch.jamiete.hilda.music.MusicServer;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 
-public class MusicSkipCommand extends ChannelSubCommand {
+class MusicSkipCommand extends ChannelSubCommand {
     private final MusicManager manager;
 
     public MusicSkipCommand(final Hilda hilda, final ChannelSeniorCommand senior, final MusicManager manager) {
@@ -33,7 +34,7 @@ public class MusicSkipCommand extends ChannelSubCommand {
         this.manager = manager;
 
         this.setName("skip");
-        this.setAliases(Arrays.asList(new String[] { "next" }));
+        this.setAliases(Collections.singletonList("next"));
         this.setDescription("Requests that the song be skipped.");
     }
 
@@ -69,14 +70,14 @@ public class MusicSkipCommand extends ChannelSubCommand {
             return;
         }
 
-        if (server != null && server.getPlayer().getPlayingTrack() == null && !server.getQueue().isEmpty()) {
+        if (server.getPlayer().getPlayingTrack() == null && !server.getQueue().isEmpty()) {
             MusicManager.getLogger().info("The queue was stuck!");
             server.play(server.getQueue().get(0));
             this.reply(message, "Oops! Skipping...");
             return;
         }
 
-        if (server == null || server != null && server.getPlayer().getPlayingTrack() == null) {
+        if (server.getPlayer().getPlayingTrack() == null) {
             MusicManager.getLogger().fine("Rejected command because no track playing");
             this.reply(message, "There isn't anything playing.");
             return;

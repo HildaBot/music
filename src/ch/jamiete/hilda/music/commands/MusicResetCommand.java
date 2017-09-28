@@ -25,7 +25,7 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 
-public class MusicResetCommand extends ChannelSubCommand {
+class MusicResetCommand extends ChannelSubCommand {
     private final MusicManager manager;
 
     public MusicResetCommand(final Hilda hilda, final ChannelSeniorCommand senior, final MusicManager manager) {
@@ -34,7 +34,7 @@ public class MusicResetCommand extends ChannelSubCommand {
         this.manager = manager;
 
         this.setName("reset");
-        this.setAliases(Arrays.asList(new String[] { "clear", "disconnect", "restart" }));
+        this.setAliases(Arrays.asList("clear", "disconnect", "restart"));
         this.setDescription("Clears the music queue and disconnects.");
     }
 
