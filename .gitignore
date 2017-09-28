@@ -1,5 +1,4 @@
-.*
-bin/
-target/
-log/
-archives/
+.gitignore
+target/*
+.idea/*
+*.iml
