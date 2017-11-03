@@ -108,6 +108,8 @@ class MusicQueueCommand extends ChannelSubCommand {
                 }
 
                 sb.append(" ").append(message.getGuild().getMemberById(track.getUserId()).getEffectiveName(), Formatting.BLOCK);
+                Member requestor = message.getGuild().getMemberById(track.getUserId());
+                sb.append(" ").append(requestor == null ? "User left server" : requestor.getEffectiveName(), Formatting.BLOCK);
 
                 sb.append("\n");
             }
