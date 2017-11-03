@@ -72,7 +72,7 @@ class MusicRemoveCommand extends ChannelSubCommand {
             this.usage(message, "<queue_code>", label);
         }
 
-        if (to_remove < 0 || to_remove > queue.size()) {
+        if ((to_remove < 0) || (to_remove >= queue.size())) {
             this.reply(message, "There is no song with that queue code.");
             return;
         }
