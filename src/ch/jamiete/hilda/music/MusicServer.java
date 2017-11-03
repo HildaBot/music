@@ -686,7 +686,7 @@ public class MusicServer extends AudioEventAdapter {
      * @return Whether the song should be skipped.
      */
     public boolean shouldSkip() {
-        return this.skips.size() >= (int) Math.ceil((double) this.getUsers() / (double) 2);
+        return !this.isLeaveQueued() && this.skips.size() >= (int) Math.ceil((double) this.getUsers() / 2);
     }
 
     /**
