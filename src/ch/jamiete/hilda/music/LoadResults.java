@@ -15,17 +15,17 @@
  */
 package ch.jamiete.hilda.music;
 
-import java.util.List;
-import java.util.logging.Level;
-import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
-import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
-import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.Util;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
+import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
+import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
+import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import java.util.List;
+import java.util.logging.Level;
 
 public class LoadResults implements AudioLoadResultHandler {
     private final MusicServer server;
@@ -47,7 +47,7 @@ public class LoadResults implements AudioLoadResultHandler {
     }
 
     @Override
-    public void loadFailed(final FriendlyException e) {
+    public final void loadFailed(final FriendlyException e) {
         if (e.getMessage().startsWith("The uploader has not made this video available")) {
             this.reply("That track is geo-blocked and cannot be played.");
         } else if (e.getMessage().startsWith("This video contains content from")) {
@@ -56,7 +56,7 @@ public class LoadResults implements AudioLoadResultHandler {
             this.reply("That track is not available to me and cannot be played.");
         } else {
             MusicManager.getLogger().log(Level.WARNING, "Couldn't load track in " + MusicManager.getFriendlyGuild(this.message.getGuild()), e);
-            this.reply("I couldn't load that track: " + e.getMessage() + ".");
+            this.reply("I couldn't load that track: " + e.getMessage() + '.');
             Hilda.getLogger().log(Level.WARNING, "Couldn't load track in " + MusicManager.getFriendlyGuild(this.message.getGuild()), e);
         }
 
@@ -64,14 +64,14 @@ public class LoadResults implements AudioLoadResultHandler {
     }
 
     @Override
-    public void noMatches() {
+    public final void noMatches() {
         MusicManager.getLogger().info("Failed to find anything for query " + this.message.getContent());
         this.reply("I couldn't find anything matching that query.");
         this.server.prompt();
     }
 
     @Override
-    public void playlistLoaded(final AudioPlaylist playlist) {
+    public final void playlistLoaded(final AudioPlaylist playlist) {
         MusicManager.getLogger().fine("Loaded a playlist");
 
         if (this.search) {
@@ -80,14 +80,14 @@ public class LoadResults implements AudioLoadResultHandler {
             return;
         }
 
-        if (this.manager.isDJ(this.message)) {
+        if (MusicManager.isDJ(this.message)) {
             MusicManager.getLogger().info("Queuing songs for DJ/admin...");
-            long duration = 0;
+            long duration = 0L;
             final long previous = this.server.getDuration();
             int queued = 0;
 
             for (final AudioTrack track : playlist.getTracks()) {
-                if (!this.server.isQueued(track) && !this.server.isQueueFull() && (this.manager.isDJ(this.message) && track.getDuration() < MusicManager.DJ_TIME_LIMIT || !this.manager.isDJ(this.message) && track.getDuration() < MusicManager.TIME_LIMIT)) {
+                if (!this.server.isQueued(track) && !this.server.isQueueFull() && ((MusicManager.isDJ(this.message) && (track.getDuration() < MusicManager.DJ_TIME_LIMIT)) || (!MusicManager.isDJ(this.message) && (track.getDuration() < MusicManager.TIME_LIMIT)))) {
                     this.server.queue(new QueueItem(track, this.member.getUser().getId()));
                     queued++;
                     duration += track.getDuration();
@@ -102,25 +102,25 @@ public class LoadResults implements AudioLoadResultHandler {
             sb.append("Queued ");
 
             if (queued < playlist.getTracks().size()) {
-                sb.append(queued).append("/").append(playlist.getTracks().size());
+                sb.append(queued).append('/').append(playlist.getTracks().size());
             } else {
                 sb.append(playlist.getTracks().size());
             }
 
             sb.append(" tracks for ").append(this.member.getEffectiveName());
 
-            if (this.server.getPlaying() == null || this.server.getPlayer().getPlayingTrack() == null) {
+            if ((this.server.getPlaying() == null) || (this.server.getPlayer().getPlayingTrack() == null)) {
                 // Something's gone wrong
                 sb.append("; up soon!");
             } else if (this.server.getPlaying().getTrack() == playlist.getTracks().get(0)) {
-                sb.append("; up now! Playing for ").append(Util.getFriendlyTime(duration)).append(".");
+                sb.append("; up now! Playing for ").append(Util.getFriendlyTime(duration)).append('.');
             } else {
                 sb.append("; playing for ").append(Util.getFriendlyTime(duration));
-                sb.append(" in ").append(Util.getFriendlyTime(previous)).append("!");
+                sb.append(" in ").append(Util.getFriendlyTime(previous)).append('!');
             }
 
             this.reply(sb.toString());
-            MusicManager.getLogger().info("Queued " + queued + "/" + playlist.getTracks().size());
+            MusicManager.getLogger().info("Queued " + queued + '/' + playlist.getTracks().size());
         } else {
             MusicManager.getLogger().fine("Trying to queue first from playlist for non-DJ...");
             this.tryLoadTrack(playlist.getTracks().get(0));
@@ -132,7 +132,7 @@ public class LoadResults implements AudioLoadResultHandler {
     }
 
     @Override
-    public void trackLoaded(final AudioTrack track) {
+    public final void trackLoaded(final AudioTrack track) {
         MusicManager.getLogger().fine("Loaded a track");
         this.tryLoadTrack(track);
     }
@@ -152,7 +152,7 @@ public class LoadResults implements AudioLoadResultHandler {
             return;
         }
 
-        if (this.manager.isDJ(this.message) && track.getDuration() > MusicManager.DJ_TIME_LIMIT || !this.manager.isDJ(this.message) && track.getDuration() > MusicManager.TIME_LIMIT) {
+        if ((MusicManager.isDJ(this.message) && (track.getDuration() > MusicManager.DJ_TIME_LIMIT)) || (!MusicManager.isDJ(this.message) && (track.getDuration() > MusicManager.TIME_LIMIT))) {
             MusicManager.getLogger().fine("Song too long; " + track.getDuration() + ">" + MusicManager.TIME_LIMIT + ".");
             this.reply("The song is too long to be queued.");
             this.server.prompt();
@@ -172,12 +172,12 @@ public class LoadResults implements AudioLoadResultHandler {
             // Something's gone wrong
             sb.append("; up soon!");
         } else {
-            sb.append("; playing in ").append(Util.getFriendlyTime(this.server.getDuration())).append("!");
+            sb.append("; playing in ").append(Util.getFriendlyTime(this.server.getDuration())).append('!');
         }
 
         final List<QueueItem> queue = this.server.getQueue();
-        if (queue.size() > 0) {
-            sb.append(" (Queue code ").append(queue.size() + 1).append(")");
+        if (!queue.isEmpty()) {
+            sb.append(" (Queue code ").append(queue.size() + 1).append(')');
         }
 
         this.reply(Util.sanitise(sb.toString()));

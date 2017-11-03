@@ -25,8 +25,8 @@ public class LogRotateTask implements Runnable {
     }
 
     @Override
-    public void run() {
-        this.plugin.setupLogging();
+    public final void run() {
+        MusicPlugin.setupLogging();
     }
 
 }

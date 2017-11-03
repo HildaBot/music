@@ -33,35 +33,35 @@ import ch.jamiete.hilda.plugins.HildaPlugin;
 
 public class MusicPlugin extends HildaPlugin {
 
-    private MusicManager music;
+    private MusicManager music = null;
 
     public MusicPlugin(final Hilda hilda) {
         super(hilda);
     }
 
-    public MusicManager getMusicManager() {
+    public final MusicManager getMusicManager() {
         return this.music;
     }
 
     @Override
-    public void onDisable() {
+    public final void onDisable() {
         for (final MusicServer server : this.music.getServers()) {
             server.sendMessage("Sorry, I'm shutting down mid-queue! See you soon.");
         }
     }
 
     @Override
-    public void onEnable() {
+    public final void onEnable() {
         this.music = new MusicManager(this.getHilda(), this);
         this.getHilda().getCommandManager().registerChannelCommand(new MusicBaseCommand(this.getHilda(), this.music));
-        this.setupLogging();
+        MusicPlugin.setupLogging();
 
         final long rotate = Util.getNextMidnightInMillis("GMT+10") - System.currentTimeMillis();
-        this.getHilda().getExecutor().scheduleAtFixedRate(new LogRotateTask(this), rotate, 86400000, TimeUnit.MILLISECONDS); // At midnight then every 24 hours
+        this.getHilda().getExecutor().scheduleAtFixedRate(new LogRotateTask(this), rotate, 86400000L, TimeUnit.MILLISECONDS); // At midnight then every 24 hours
         Hilda.getLogger().info("Rotating log files in " + Util.getFriendlyTime(rotate));
     }
 
-    public void setupLogging() {
+    public static final void setupLogging() {
         MusicManager.getLogger().setUseParentHandlers(false);
 
         for (final Handler handler : MusicManager.getLogger().getHandlers()) {

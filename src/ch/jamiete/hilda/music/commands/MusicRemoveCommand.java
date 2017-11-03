@@ -15,8 +15,6 @@
  */
 package ch.jamiete.hilda.music.commands;
 
-import java.util.Collections;
-import java.util.List;
 import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.Util;
 import ch.jamiete.hilda.commands.ChannelSeniorCommand;
@@ -26,11 +24,13 @@ import ch.jamiete.hilda.music.MusicServer;
 import ch.jamiete.hilda.music.QueueItem;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
+import java.util.Collections;
+import java.util.List;
 
 class MusicRemoveCommand extends ChannelSubCommand {
     private final MusicManager manager;
 
-    public MusicRemoveCommand(final Hilda hilda, final ChannelSeniorCommand senior, final MusicManager manager) {
+    MusicRemoveCommand(final Hilda hilda, final ChannelSeniorCommand senior, final MusicManager manager) {
         super(hilda, senior);
 
         this.manager = manager;
@@ -41,7 +41,7 @@ class MusicRemoveCommand extends ChannelSubCommand {
     }
 
     @Override
-    public void execute(final Message message, final String[] args, final String label) {
+    public final void execute(final Message message, final String[] args, final String label) {
         final Member member = message.getGuild().getMember(message.getAuthor());
         final MusicServer server = this.manager.getServer(message.getGuild());
 
@@ -52,13 +52,13 @@ class MusicRemoveCommand extends ChannelSubCommand {
 
         final List<QueueItem> queue = server.getQueue();
 
-        if (member.getVoiceState().getChannel() != server.getChannel() && !this.manager.isDJ(message)) {
+        if ((member.getVoiceState().getChannel() != server.getChannel()) && !MusicManager.isDJ(message)) {
             MusicManager.getLogger().fine("Rejected command because user not in my voice channel");
             this.reply(message, "You must be in the same voice channel as me to skip.");
             return;
         }
 
-        if (queue.size() == 0) {
+        if (queue.isEmpty()) {
             MusicManager.getLogger().fine("Rejected command because no tracks queued");
             this.reply(message, "There isn't anything queued.");
             return;
@@ -68,7 +68,7 @@ class MusicRemoveCommand extends ChannelSubCommand {
 
         try {
             to_remove = Integer.parseInt(args[0]) - 1;
-        } catch (final Exception e) {
+        } catch (final Exception ignored) {
             this.usage(message, "<queue_code>", label);
         }
 
@@ -79,7 +79,7 @@ class MusicRemoveCommand extends ChannelSubCommand {
 
         final QueueItem item = queue.get(to_remove);
 
-        if (!item.getUserId().equals(message.getAuthor().getId()) && !this.manager.isDJ(message)) {
+        if (!item.getUserId().equals(message.getAuthor().getId()) && !MusicManager.isDJ(message)) {
             this.reply(message, "You can't remove a song you didn't queue.");
             return;
         }

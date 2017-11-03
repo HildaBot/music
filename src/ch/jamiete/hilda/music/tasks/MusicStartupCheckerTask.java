@@ -26,7 +26,7 @@ public class MusicStartupCheckerTask extends TimerTask {
     }
 
     @Override
-    public void run() {
+    public final void run() {
         if (this.server.isStopping()) {
             return;
         }

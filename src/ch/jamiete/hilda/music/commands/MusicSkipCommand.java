@@ -15,8 +15,6 @@
  */
 package ch.jamiete.hilda.music.commands;
 
-import java.util.Collections;
-
 import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.commands.ChannelSeniorCommand;
 import ch.jamiete.hilda.commands.ChannelSubCommand;
@@ -24,11 +22,12 @@ import ch.jamiete.hilda.music.MusicManager;
 import ch.jamiete.hilda.music.MusicServer;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
+import java.util.Collections;
 
 class MusicSkipCommand extends ChannelSubCommand {
     private final MusicManager manager;
 
-    public MusicSkipCommand(final Hilda hilda, final ChannelSeniorCommand senior, final MusicManager manager) {
+    MusicSkipCommand(final Hilda hilda, final ChannelSeniorCommand senior, final MusicManager manager) {
         super(hilda, senior);
 
         this.manager = manager;
@@ -39,7 +38,7 @@ class MusicSkipCommand extends ChannelSubCommand {
     }
 
     @Override
-    public void execute(final Message message, final String[] args, final String label) {
+    public final void execute(final Message message, final String[] args, final String label) {
         final Member member = message.getGuild().getMember(message.getAuthor());
 
         if (!member.getVoiceState().inVoiceChannel()) {
@@ -57,7 +56,7 @@ class MusicSkipCommand extends ChannelSubCommand {
         final MusicServer server = this.manager.getServer(message.getGuild());
 
         if (server == null) {
-            if (System.currentTimeMillis() - this.manager.getRecent(message.getGuild().getIdLong()) >= 60000) {
+            if ((System.currentTimeMillis() - this.manager.getRecent(message.getGuild().getIdLong())) >= 60000L) {
                 this.reply(message, "There isn't anything playing.");
             }
 
@@ -70,7 +69,7 @@ class MusicSkipCommand extends ChannelSubCommand {
             return;
         }
 
-        if (server.getPlayer().getPlayingTrack() == null && !server.getQueue().isEmpty()) {
+        if ((server.getPlayer().getPlayingTrack() == null) && !server.getQueue().isEmpty()) {
             MusicManager.getLogger().info("The queue was stuck!");
             server.play(server.getQueue().get(0));
             this.reply(message, "Oops! Skipping...");
@@ -102,9 +101,9 @@ class MusicSkipCommand extends ChannelSubCommand {
             if (server.shouldSkip()) {
                 sb.append(" Skipping...");
             } else {
-                final int needed = (int) Math.ceil((double) server.getUsers() / (double) 2);
-                sb.append(" **").append(server.getSkips()).append("/").append(needed).append("**");
-                MusicManager.getLogger().fine("Skips: " + server.getSkips() + "/" + needed);
+                final int needed = (int) Math.ceil((double) server.getUsers() / 2);
+                sb.append(" **").append(server.getSkips()).append('/').append(needed).append("**");
+                MusicManager.getLogger().fine("Skips: " + server.getSkips() + '/' + needed);
             }
 
             this.reply(message, sb.toString());

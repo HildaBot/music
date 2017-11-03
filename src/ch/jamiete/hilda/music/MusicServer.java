@@ -15,20 +15,6 @@
  */
 package ch.jamiete.hilda.music;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.stream.Collectors;
-import com.google.gson.JsonElement;
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
-import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import ch.jamiete.hilda.Util;
 import ch.jamiete.hilda.configuration.Configuration;
 import ch.jamiete.hilda.events.EventHandler;
@@ -47,6 +33,20 @@ import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMuteEvent;
 import net.dv8tion.jda.core.exceptions.PermissionException;
+import com.google.gson.JsonElement;
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
+import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
+import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 /**
  * This class represents a {@link net.dv8tion.jda.core.entities.Guild Guild} that music is being played on.
@@ -57,17 +57,17 @@ public class MusicServer extends AudioEventAdapter {
     private final Configuration config;
 
     private final Guild guild;
-    private VoiceChannel channel;
+    private VoiceChannel channel = null;
 
-    private boolean stopping = false;
-    private ScheduledFuture<?> task;
+    private boolean stopping;
+    private ScheduledFuture<?> task = null;
 
     private final List<QueueItem> queue = Collections.synchronizedList(new ArrayList<QueueItem>());
-    private final ArrayList<String> skips = new ArrayList<>();
+    private final List<String> skips = new ArrayList<>();
 
-    private QueueItem now;
+    private QueueItem now = null;
 
-    private String lastplaying;
+     private String lastplaying = null;
 
     public MusicServer(final MusicManager manager, final AudioPlayer player, final Guild guild) {
         this.manager = manager;
@@ -87,7 +87,7 @@ public class MusicServer extends AudioEventAdapter {
      * Adds a skip to the currently playing song.
      * @param string The ID of the user skipping the song.
      */
-    public void addSkip(final String string) {
+    public final void addSkip(final String string) {
         this.skips.add(string);
     }
 
@@ -96,15 +96,15 @@ public class MusicServer extends AudioEventAdapter {
      * This checks whether the bot is in a server with someone sharing a mutual guild. A Discord bug will result in the mutual no longer being able to hear the bot until they rejoin the voice channel.
      * @return Whether it is safe.
      */
-    public boolean canShutdown() {
+    public final boolean canShutdown() {
         boolean clash = false;
 
         for (final MusicServer server : this.manager.getServers()) {
-            if (server == this || server.getPlayer().getPlayingTrack() == null) {
+            if ((server == this) || (server.getPlayer().getPlayingTrack() == null)) {
                 continue;
             }
 
-            for (final Member member : server.getChannel().getMembers().stream().filter(m -> !m.getUser().isBot()).collect(Collectors.toList())) {
+            for (final Member member : server.channel.getMembers().stream().filter(m -> !m.getUser().isBot()).collect(Collectors.toList())) {
                 if (this.guild.getMember(member.getUser()) != null) {
                     clash = true;
                 }
@@ -118,7 +118,7 @@ public class MusicServer extends AudioEventAdapter {
      * Gets the channel the server is playing to.
      * @return The channel the server is playing to or {@code null} if there is none.
      */
-    public VoiceChannel getChannel() {
+    public final VoiceChannel getChannel() {
         return this.channel;
     }
 
@@ -126,7 +126,7 @@ public class MusicServer extends AudioEventAdapter {
      * Gets the configuration for this server.
      * @return This server's configuration.
      */
-    public Configuration getConfig() {
+    public final Configuration getConfig() {
         return this.config;
     }
 
@@ -134,8 +134,8 @@ public class MusicServer extends AudioEventAdapter {
      * Gets the remaining time until the queue as it stands will end.
      * @return The remaining time in ms
      */
-    public long getDuration() {
-        long duration = 0;
+    public final long getDuration() {
+        long duration = 0L;
         final AudioTrack current = this.player.getPlayingTrack();
 
         if (current != null) {
@@ -143,7 +143,7 @@ public class MusicServer extends AudioEventAdapter {
         }
 
         synchronized (this.queue) {
-            for (QueueItem item : this.queue) {
+            for (final QueueItem item : this.queue) {
                 duration += item.getTrack().getDuration();
             }
         }
@@ -155,7 +155,7 @@ public class MusicServer extends AudioEventAdapter {
      * Gets the guild the server is associated with.
      * @return The guild.
      */
-    public Guild getGuild() {
+    public final Guild getGuild() {
         return this.guild;
     }
 
@@ -163,7 +163,7 @@ public class MusicServer extends AudioEventAdapter {
      * Gets the audio player used by the server.
      * @return The audio player.
      */
-    public AudioPlayer getPlayer() {
+    public final AudioPlayer getPlayer() {
         return this.player;
     }
 
@@ -171,7 +171,7 @@ public class MusicServer extends AudioEventAdapter {
      * Gets the QueueItem the server is currently playing.
      * @return The queue item.
      */
-    public QueueItem getPlaying() {
+    public final QueueItem getPlaying() {
         return this.now;
     }
 
@@ -179,7 +179,7 @@ public class MusicServer extends AudioEventAdapter {
      * Gets a copy of the queue the server contains.
      * @return An unmodifiable list of the queue.
      */
-    public List<QueueItem> getQueue() {
+    public final List<QueueItem> getQueue() {
         synchronized (this.queue) {
             return Collections.unmodifiableList(this.queue);
         }
@@ -194,8 +194,8 @@ public class MusicServer extends AudioEventAdapter {
         final StringBuilder sb = new StringBuilder();
 
         synchronized (this.queue) {
-            for (QueueItem q : this.queue) {
-                sb.append("[").append("track=");
+            for (final QueueItem q : this.queue) {
+                sb.append('[').append("track=");
                 sb.append(q.getTrack().getIdentifier()).append(", ");
                 sb.append("user=").append(q.getUserId());
                 sb.append("] ");
@@ -218,7 +218,7 @@ public class MusicServer extends AudioEventAdapter {
      * Gets the number of skips currently registered.
      * @return The number of skips currently registered.
      */
-    public int getSkips() {
+    public final int getSkips() {
         return this.skips.size();
     }
 
@@ -238,8 +238,8 @@ public class MusicServer extends AudioEventAdapter {
      * Gets the number of users in the server's channel that are not bots and are not defeaned.
      * @return The number of users in the server's channel that are not bots and are not defeaned.
      */
-    public int getUsers() {
-        if (this.channel == null || this.channel.getMembers() == null) {
+    public final int getUsers() {
+        if ((this.channel == null) || (this.channel.getMembers() == null)) {
             return 0;
         }
 
@@ -251,7 +251,7 @@ public class MusicServer extends AudioEventAdapter {
      * @param string The user ID to be tested.
      * @return Whether the user ID has sought that the current song be skipped.
      */
-    public boolean hasSkipped(final String string) {
+    public final boolean hasSkipped(final String string) {
         return this.skips.contains(string);
     }
 
@@ -268,13 +268,13 @@ public class MusicServer extends AudioEventAdapter {
      * @param track The track to test.
      * @return Whether the track is in the queue.
      */
-    public boolean isQueued(final AudioTrack track) {
-        if (this.player.getPlayingTrack() != null && this.player.getPlayingTrack().getIdentifier().equals(track.getIdentifier())) {
+    public final boolean isQueued(final AudioTrack track) {
+        if ((this.player.getPlayingTrack() != null) && this.player.getPlayingTrack().getIdentifier().equals(track.getIdentifier())) {
             return true;
         }
 
         synchronized (this.queue) {
-            for (QueueItem aQueue : this.queue) {
+            for (final QueueItem aQueue : this.queue) {
                 if (track.getIdentifier().equalsIgnoreCase(aQueue.getTrack().getIdentifier())) {
                     return true;
                 }
@@ -288,7 +288,7 @@ public class MusicServer extends AudioEventAdapter {
      * Checks whether the queue is full.
      * @return Whether the queue is full.
      */
-    public boolean isQueueFull() {
+    public final boolean isQueueFull() {
         return this.queue.size() >= MusicManager.QUEUE_LIMIT;
     }
 
@@ -296,12 +296,12 @@ public class MusicServer extends AudioEventAdapter {
      * Gets whether the server is shutting down.
      * @return whether server is shutting down
      */
-    public boolean isStopping() {
+    public final boolean isStopping() {
         return this.stopping;
     }
 
     @EventHandler
-    public void onEvent(final Event e) {
+    public final void onEvent(final Event e) {
         if (this.stopping) {
             return;
         }
@@ -313,7 +313,7 @@ public class MusicServer extends AudioEventAdapter {
                 if (this.getUsers() == 0) {
                     MusicManager.getLogger().fine("Stopping because all users left the channel");
                     this.shutdown();
-                    this.getPlayer().stopTrack();
+                    this.player.stopTrack();
                     this.prompt();
                 }
 
@@ -382,7 +382,7 @@ public class MusicServer extends AudioEventAdapter {
         if (e instanceof GuildVoiceDeafenEvent) {
             final GuildVoiceDeafenEvent event = (GuildVoiceDeafenEvent) e;
 
-            if (event.isDeafened() && event.getMember().getVoiceState().getChannel() == this.channel) {
+            if (event.isDeafened() && (event.getMember().getVoiceState().getChannel() == this.channel)) {
                 if (this.hasSkipped(event.getMember().getUser().getId())) {
                     this.removeSkip(event.getMember().getUser().getId());
                 }
@@ -397,7 +397,7 @@ public class MusicServer extends AudioEventAdapter {
     }
 
     @Override
-    public void onTrackEnd(final AudioPlayer player, final AudioTrack track, final AudioTrackEndReason endReason) {
+    public final void onTrackEnd(final AudioPlayer player, final AudioTrack track, final AudioTrackEndReason endReason) {
         MusicManager.getLogger().fine("Track ended " + track.getIdentifier());
 
         if (this.stopping) {
@@ -424,7 +424,7 @@ public class MusicServer extends AudioEventAdapter {
         if (this.isQueued(track)) {
             MusicManager.getLogger().fine("Track was still in queue; deleting.");
             synchronized (this.queue) {
-                for (QueueItem item : this.queue) {
+                for (final QueueItem item : this.queue) {
                     if (item.getTrack().equals(track)) {
                         this.queue.remove(item);
                     }
@@ -432,14 +432,14 @@ public class MusicServer extends AudioEventAdapter {
             }
         }
 
-        if (endReason.mayStartNext || endReason == AudioTrackEndReason.STOPPED) {
+        if (endReason.mayStartNext || (endReason == AudioTrackEndReason.STOPPED)) {
             MusicManager.getLogger().fine("Starting next song...");
             this.play(this.queue.get(0));
         }
     }
 
     @Override
-    public void onTrackException(final AudioPlayer player, final AudioTrack track, final FriendlyException exception) {
+    public final void onTrackException(final AudioPlayer player, final AudioTrack track, final FriendlyException exception) {
         this.setGame(null);
 
         if (exception.getCause() instanceof UnsatisfiedLinkError) {
@@ -456,7 +456,7 @@ public class MusicServer extends AudioEventAdapter {
     }
 
     @Override
-    public void onTrackStart(final AudioPlayer player, final AudioTrack track) {
+    public final void onTrackStart(final AudioPlayer player, final AudioTrack track) {
         MusicManager.getLogger().fine("Track began " + track.getIdentifier());
 
         this.skips.clear();
@@ -473,7 +473,7 @@ public class MusicServer extends AudioEventAdapter {
     }
 
     @Override
-    public void onTrackStuck(final AudioPlayer player, final AudioTrack track, final long thresholdMs) {
+    public final void onTrackStuck(final AudioPlayer player, final AudioTrack track, final long thresholdMs) {
         MusicManager.getLogger().warning("Track " + track.getIdentifier() + " got stuck in " + this.guild.getName() + "; skipping...");
         this.sendMessage("Track stuck; skipping.");
         this.play(this.queue.get(0));
@@ -483,8 +483,8 @@ public class MusicServer extends AudioEventAdapter {
      * Attemts to play a queue item. If {@code null} is passed, the server will check if it should destroy itself.
      * @param item The item to play.
      */
-    public void play(final QueueItem item) {
-        MusicManager.getLogger().info("Playing a song in " + this.guild.getName() + " " + this.guild.getId() + " " + item);
+    public final void play(final QueueItem item) {
+        MusicManager.getLogger().info("Playing a song in " + this.guild.getName() + ' ' + this.guild.getId() + ' ' + item);
 
         if (this.task != null) {
             this.task.cancel(false);
@@ -493,16 +493,16 @@ public class MusicServer extends AudioEventAdapter {
 
         this.now = item;
 
-        this.player.playTrack(item == null ? null : item.getTrack());
+        this.player.playTrack((item == null) ? null : item.getTrack());
 
         if (item == null) {
             this.prompt();
         } else {
-            this.sendMessage("Now playing " + MusicManager.getFriendly(item.getTrack()) + " as requested by " + this.guild.getMemberById(item.getUserId()).getEffectiveName() + ".");
+            this.sendMessage("Now playing " + MusicManager.getFriendly(item.getTrack()) + " as requested by " + this.guild.getMemberById(item.getUserId()).getEffectiveName() + '.');
             this.setGame(this.getSong());
         }
 
-        if (item != null && this.isQueued(item.getTrack())) {
+        if ((item != null) && this.isQueued(item.getTrack())) {
             this.queue.remove(item);
         }
     }
@@ -510,14 +510,14 @@ public class MusicServer extends AudioEventAdapter {
     /**
      * Prompt the server to check whether it should still exist. If no songs are playing and the queue is empty the server will shut itself down.
      */
-    public void prompt() {
+    public final void prompt() {
         if (this.stopping) {
             return;
         }
 
         MusicManager.getLogger().fine("Deciding whether to shut down...");
 
-        if (this.player.getPlayingTrack() == null && this.queue.isEmpty()) {
+        if ((this.player.getPlayingTrack() == null) && this.queue.isEmpty()) {
             MusicManager.getLogger().fine("Shutting down because there's nothing playing...");
             this.shutdown();
             return;
@@ -530,7 +530,7 @@ public class MusicServer extends AudioEventAdapter {
      * Adds an item to the end of the queue. If no song is currently playing, the song will be played.
      * @param queue The item to queue.
      */
-    public void queue(final QueueItem queue) {
+    public final void queue(final QueueItem queue) {
         this.queue(queue, false);
     }
 
@@ -560,7 +560,7 @@ public class MusicServer extends AudioEventAdapter {
      * Queues a bot shutdown.
      */
     private void queueShutdown() {
-        this.task = this.manager.getHilda().getExecutor().schedule(new MusicLeaveTask(this), 5, TimeUnit.MINUTES);
+        this.task = this.manager.getHilda().getExecutor().schedule(new MusicLeaveTask(this), 5L, TimeUnit.MINUTES);
     }
 
     /**
@@ -576,7 +576,7 @@ public class MusicServer extends AudioEventAdapter {
      * The bot will pick the first of these that it can send a message to. If the bot cannot find any channels it will shutdown.
      * @param message The message to send
      */
-    public void sendMessage(final String message) {
+    public final void sendMessage(final String message) {
         TextChannel channel = null;
 
         final JsonElement output = this.config.get().get("output");
@@ -587,11 +587,11 @@ public class MusicServer extends AudioEventAdapter {
 
         if (channel == null) {
             for (final TextChannel chan : this.guild.getTextChannels()) {
-                if (chan.getName().equalsIgnoreCase("bot") && chan.canTalk()) {
+                if ("bot".equalsIgnoreCase(chan.getName()) && chan.canTalk()) {
                     channel = chan;
                 }
 
-                if (chan.getName().equalsIgnoreCase("bots") && chan.canTalk()) {
+                if ("bots".equalsIgnoreCase(chan.getName()) && chan.canTalk()) {
                     channel = chan;
                 }
             }
@@ -606,7 +606,7 @@ public class MusicServer extends AudioEventAdapter {
                 if (chan.isPresent()) {
                     channel = chan.get();
                 } else {
-                    MusicManager.getLogger().severe("Couldn't find any channels to talk to in " + this.guild.getName() + " " + this.guild.getId() + "; leaving...");
+                    MusicManager.getLogger().severe("Couldn't find any channels to talk to in " + this.guild.getName() + ' ' + this.guild.getId() + "; leaving...");
                     this.shutdown();
                     return;
                 }
@@ -623,7 +623,7 @@ public class MusicServer extends AudioEventAdapter {
      * If the bot cannot join the channel it will shutdown.
      * @param channel The channel to use.
      */
-    public void setChannel(final VoiceChannel channel) {
+    public final void setChannel(final VoiceChannel channel) {
         MusicManager.getLogger().fine("Setting channel to " + channel.getName());
 
         if (this.channel != null) {
@@ -639,8 +639,8 @@ public class MusicServer extends AudioEventAdapter {
 
         try {
             this.guild.getAudioManager().openAudioConnection(channel);
-        } catch (final PermissionException e) {
-            MusicManager.getLogger().info("Couldn't connect to a voice channel in " + this.guild.getName() + " " + this.guild.getId() + "; shutting down...");
+        } catch (final PermissionException ignored) {
+            MusicManager.getLogger().info("Couldn't connect to a voice channel in " + this.guild.getName() + ' ' + this.guild.getId() + "; shutting down...");
             this.sendMessage("I couldn't connect to the voice channel; aborting.");
             this.shutdown();
         }
@@ -661,12 +661,12 @@ public class MusicServer extends AudioEventAdapter {
         MusicManager.getLogger().fine("Queueing game to " + set);
         final Game game = this.manager.getHilda().getBot().getPresence().getGame();
 
-        if (set == null && this.lastplaying == null) {
+        if ((set == null) && (this.lastplaying == null)) {
             return;
         }
 
         if (set == null) {
-            if (game != null && game.getName().equalsIgnoreCase(this.lastplaying) && (this.queue.isEmpty() || this.stopping)) {
+            if ((game != null) && game.getName().equalsIgnoreCase(this.lastplaying) && (this.queue.isEmpty() || this.stopping)) {
                 this.manager.getHilda().getExecutor().execute(new GameSetTask(this.manager.getHilda(), null));
             }
 
@@ -677,7 +677,7 @@ public class MusicServer extends AudioEventAdapter {
         this.lastplaying = set;
     }
 
-    public void setLeave(final ScheduledFuture<?> task) {
+    public final void setLeave(final ScheduledFuture<?> task) {
         this.task = task;
     }
 
@@ -685,14 +685,14 @@ public class MusicServer extends AudioEventAdapter {
      * Checks whether the song should be skipped.
      * @return Whether the song should be skipped.
      */
-    public boolean shouldSkip() {
+    public final boolean shouldSkip() {
         return !this.isLeaveQueued() && this.skips.size() >= (int) Math.ceil((double) this.getUsers() / 2);
     }
 
     /**
      * Shuffles the queue.
      */
-    public void shuffle() {
+    public final void shuffle() {
         synchronized (this.queue) {
             Collections.shuffle(this.queue);
         }
@@ -701,7 +701,7 @@ public class MusicServer extends AudioEventAdapter {
     /**
      * Will shut the bot down immediately (and leave the voice channel) if possible, or queue a shutdown.
      */
-    public void shutdown() {
+    public final void shutdown() {
         if (this.canShutdown()) {
             this.shutdownNow(true);
         } else {
@@ -712,12 +712,12 @@ public class MusicServer extends AudioEventAdapter {
     /**
      * Shuts down the bot immediately.
      */
-    public void shutdownNow(final boolean leave) {
+    public final void shutdownNow(final boolean leave) {
         if (this.stopping) {
             return;
         }
 
-        MusicManager.getLogger().info("Shutting down " + this.guild.getName() + " " + this.guild.getId() + "...");
+        MusicManager.getLogger().info("Shutting down " + this.guild.getName() + ' ' + this.guild.getId() + "...");
 
         this.stopping = true;
         this.manager.getHilda().getBot().removeEventListener(this);
@@ -750,7 +750,7 @@ public class MusicServer extends AudioEventAdapter {
      * Removes a QueueItem from the queue.
      * @param item The item to remove.
      */
-    public void unqueue(final QueueItem item) {
+    public final void unqueue(final QueueItem item) {
         this.queue.remove(item);
     }
 

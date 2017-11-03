@@ -25,7 +25,7 @@ public class MusicLeaveTask implements Runnable {
     }
 
     @Override
-    public void run() {
+    public final void run() {
         this.server.shutdown();
     }
 

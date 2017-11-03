@@ -15,10 +15,6 @@
  */
 package ch.jamiete.hilda.music.commands;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import org.apache.commons.lang3.StringUtils;
 import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.Util;
 import ch.jamiete.hilda.commands.ChannelSeniorCommand;
@@ -29,12 +25,17 @@ import ch.jamiete.hilda.music.QueueItem;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.MessageBuilder.Formatting;
 import net.dv8tion.jda.core.MessageBuilder.SplitPolicy;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
+import org.apache.commons.lang3.StringUtils;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 class MusicQueueCommand extends ChannelSubCommand {
     private final MusicManager manager;
 
-    public MusicQueueCommand(final Hilda hilda, final ChannelSeniorCommand senior, final MusicManager manager) {
+    MusicQueueCommand(final Hilda hilda, final ChannelSeniorCommand senior, final MusicManager manager) {
         super(hilda, senior);
 
         this.manager = manager;
@@ -45,7 +46,7 @@ class MusicQueueCommand extends ChannelSubCommand {
     }
 
     @Override
-    public void execute(final Message message, final String[] args, final String label) {
+    public final void execute(final Message message, final String[] args, final String label) {
         final MusicServer server = this.manager.getServer(message.getGuild());
 
         if (server == null) {
@@ -74,14 +75,14 @@ class MusicQueueCommand extends ChannelSubCommand {
             return;
         }
 
-        final List<QueueItem> tracks = this.getPage(queue, page, pageSize);
+        final List<QueueItem> tracks = MusicQueueCommand.getPage(queue, page, pageSize);
         final MessageBuilder sb = new MessageBuilder();
 
         if (tracks.isEmpty()) {
             this.reply(message, "That page is empty.");
         } else {
-            sb.append("There ").append(queue.size() == 1 ? "is" : "are").append(" ");
-            sb.append(queue.size()).append(" ").append(queue.size() == 1 ? "track" : "tracks");
+            sb.append("There ").append((queue.size() == 1) ? "is" : "are").append(" ");
+            sb.append(queue.size()).append(" ").append((queue.size() == 1) ? "track" : "tracks");
             sb.append(" queued for ").append(Util.getFriendlyTime(server.getDuration()));
 
             if (tracks.size() != queue.size()) {
@@ -90,24 +91,23 @@ class MusicQueueCommand extends ChannelSubCommand {
                 if (page == 0) {
                     sb.append("1–").append(pageSize);
                 } else {
-                    final int first = page * pageSize + 1;
-                    sb.append(first).append("–").append(Math.min(first + pageSize - 1, queue.size()));
+                    final int first = (page * pageSize) + 1;
+                    sb.append(first).append("–").append(Math.min((first + pageSize) - 1, queue.size()));
                 }
             }
 
             sb.append(":").append("\n\n");
 
             for (final QueueItem track : tracks) {
-                sb.append("[" + ++queue_code + "]", Formatting.BLOCK).append(" ");
+                sb.append("[" + ++queue_code + ']', Formatting.BLOCK).append(" ");
 
                 sb.append(Util.sanitise(MusicManager.getFriendly(track.getTrack())));
 
                 final String time = MusicManager.getFriendlyTime(track.getTrack());
-                if (time.trim().length() > 0) {
+                if (!time.trim().isEmpty()) {
                     sb.append(" (").append(time).append(")");
                 }
 
-                sb.append(" ").append(message.getGuild().getMemberById(track.getUserId()).getEffectiveName(), Formatting.BLOCK);
                 Member requestor = message.getGuild().getMemberById(track.getUserId());
                 sb.append(" ").append(requestor == null ? "User left server" : requestor.getEffectiveName(), Formatting.BLOCK);
 
@@ -116,17 +116,17 @@ class MusicQueueCommand extends ChannelSubCommand {
 
             if (tracks.size() != queue.size()) {
                 sb.append("\n");
-                sb.append("End of page ").append(page + 1).append("/").append((int) Math.ceil((double) queue.size() / pageSize)).append(".");
+                sb.append("End of page ").append(page + 1).append("/").append((int) Math.ceil((double) queue.size() / (double) pageSize)).append(".");
             }
 
             sb.buildAll(SplitPolicy.NEWLINE).forEach(m -> this.reply(message, m));
         }
     }
 
-    private <T> List<T> getPage(final List<T> sourceList, final int page, final int pageSize) {
+    private static <T> List<T> getPage(final List<T> sourceList, final int page, final int pageSize) {
         final int fromIndex = page * pageSize;
 
-        if (sourceList == null || sourceList.size() < fromIndex) {
+        if ((sourceList == null) || (sourceList.size() < fromIndex)) {
             return Collections.emptyList();
         }
 

@@ -31,7 +31,7 @@ import net.dv8tion.jda.core.entities.Message;
 class MusicNowPlayingCommand extends ChannelSubCommand {
     private final MusicManager manager;
 
-    public MusicNowPlayingCommand(final Hilda hilda, final ChannelSeniorCommand senior, final MusicManager manager) {
+    MusicNowPlayingCommand(final Hilda hilda, final ChannelSeniorCommand senior, final MusicManager manager) {
         super(hilda, senior);
 
         this.manager = manager;
@@ -42,10 +42,10 @@ class MusicNowPlayingCommand extends ChannelSubCommand {
     }
 
     @Override
-    public void execute(final Message message, final String[] args, final String label) {
+    public final void execute(final Message message, final String[] args, final String label) {
         final MusicServer server = this.manager.getServer(message.getGuild());
 
-        if (server == null || server.getPlaying() == null) {
+        if ((server == null) || (server.getPlaying() == null)) {
             this.reply(message, "There isn't anything playing.");
             return;
         }
@@ -55,7 +55,7 @@ class MusicNowPlayingCommand extends ChannelSubCommand {
 
         mb.append("Now playing ").append(Util.sanitise(MusicManager.getFriendly(playing.getTrack()))).append("\n");
 
-        if (playing.getTrack().getInfo().length != 0) {
+        if (playing.getTrack().getInfo().length != 0L) {
             mb.append("\n").append("Time: ", Formatting.BOLD);
             mb.append(DurationFormatUtils.formatDuration(playing.getTrack().getPosition(), "HH:mm:ss", true));
             mb.append("/");
@@ -67,7 +67,7 @@ class MusicNowPlayingCommand extends ChannelSubCommand {
 
         mb.append("\n");
         mb.append("Skip votes: ", Formatting.BOLD);
-        final int needed = (int) Math.ceil((double) server.getUsers() / (double) 2);
+        final int needed = (int) Math.ceil((double) server.getUsers() / 2);
         mb.append(server.getSkips()).append("/").append(needed);
 
         this.reply(message, mb.build());

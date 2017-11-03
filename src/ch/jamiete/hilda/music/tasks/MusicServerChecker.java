@@ -28,7 +28,7 @@ public class MusicServerChecker extends TimerTask {
     }
 
     @Override
-    public void run() {
+    public final void run() {
         for (final MusicServer server : this.manager.getServers()) {
             server.prompt();
 
@@ -36,12 +36,12 @@ public class MusicServerChecker extends TimerTask {
                 return;
             }
 
-            if (server.getGuild().getAudioManager().isConnected() && server.getGuild().getAudioManager().getConnectedChannel() != server.getChannel()) {
+            if (server.getGuild().getAudioManager().isConnected() && (server.getGuild().getAudioManager().getConnectedChannel() != server.getChannel())) {
                 MusicManager.getLogger().info("Moved from " + server.getGuild().getAudioManager().getConnectedChannel().getName() + " to expected channel");
                 server.getGuild().getAudioManager().openAudioConnection(server.getChannel());
             }
 
-            if (!server.getQueue().isEmpty() && server.getPlayer().getPlayingTrack() == null) {
+            if (!server.getQueue().isEmpty() && (server.getPlayer().getPlayingTrack() == null)) {
                 server.play(server.getQueue().get(0));
             }
         }
@@ -49,7 +49,7 @@ public class MusicServerChecker extends TimerTask {
         for (final Guild guild : this.manager.getHilda().getBot().getGuilds()) {
             final MusicServer server = this.manager.getServer(guild);
 
-            if (guild.getAudioManager().isConnected() && server == null) {
+            if (guild.getAudioManager().isConnected() && (server == null)) {
                 MusicManager.getLogger().info("Disconnecting from voice chat in untracked server " + guild.getName());
                 guild.getAudioManager().closeAudioConnection();
             }

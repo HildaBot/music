@@ -28,7 +28,7 @@ import net.dv8tion.jda.core.entities.Message;
 class MusicResetCommand extends ChannelSubCommand {
     private final MusicManager manager;
 
-    public MusicResetCommand(final Hilda hilda, final ChannelSeniorCommand senior, final MusicManager manager) {
+    MusicResetCommand(final Hilda hilda, final ChannelSeniorCommand senior, final MusicManager manager) {
         super(hilda, senior);
 
         this.manager = manager;
@@ -39,10 +39,10 @@ class MusicResetCommand extends ChannelSubCommand {
     }
 
     @Override
-    public void execute(final Message message, final String[] args, final String label) {
+    public final void execute(final Message message, final String[] args, final String label) {
         final Member member = message.getGuild().getMember(message.getAuthor());
 
-        if (!member.hasPermission(message.getTextChannel(), Permission.MANAGE_SERVER) && !this.manager.isDJ(message)) {
+        if (!member.hasPermission(message.getTextChannel(), Permission.MANAGE_SERVER) && !MusicManager.isDJ(message)) {
             this.reply(message, "You must be a DJ to use this command.");
             return;
         }

@@ -26,14 +26,14 @@ import net.dv8tion.jda.core.audio.AudioSendHandler;
  */
 class AudioPlayerSendHandler implements AudioSendHandler {
     private final AudioPlayer audioPlayer;
-    private AudioFrame lastFrame;
+    private AudioFrame lastFrame = null;
 
-    public AudioPlayerSendHandler(final AudioPlayer audioPlayer) {
+    AudioPlayerSendHandler(final AudioPlayer audioPlayer) {
         this.audioPlayer = audioPlayer;
     }
 
     @Override
-    public boolean canProvide() {
+    public final boolean canProvide() {
         if (this.lastFrame == null) {
             this.lastFrame = this.audioPlayer.provide();
         }
@@ -42,17 +42,17 @@ class AudioPlayerSendHandler implements AudioSendHandler {
     }
 
     @Override
-    public boolean isOpus() {
+    public final boolean isOpus() {
         return true;
     }
 
     @Override
-    public byte[] provide20MsAudio() {
+    public final byte[] provide20MsAudio() {
         if (this.lastFrame == null) {
             this.lastFrame = this.audioPlayer.provide();
         }
 
-        final byte[] data = this.lastFrame != null ? this.lastFrame.data : null;
+        final byte[] data = (this.lastFrame != null) ? this.lastFrame.data : null;
         this.lastFrame = null;
 
         return data;

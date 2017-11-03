@@ -31,7 +31,7 @@ import net.dv8tion.jda.core.entities.VoiceChannel;
 class MusicPlayCommand extends ChannelSubCommand {
     private final MusicManager manager;
 
-    public MusicPlayCommand(final Hilda hilda, final ChannelSeniorCommand senior, final MusicManager manager) {
+    MusicPlayCommand(final Hilda hilda, final ChannelSeniorCommand senior, final MusicManager manager) {
         super(hilda, senior);
 
         this.manager = manager;
@@ -42,7 +42,7 @@ class MusicPlayCommand extends ChannelSubCommand {
     }
 
     @Override
-    public void execute(final Message message, final String[] args, final String label) {
+    public final void execute(final Message message, final String[] args, final String label) {
         final Member member = message.getGuild().getMember(message.getAuthor());
 
         if (args.length == 0) {
@@ -65,7 +65,7 @@ class MusicPlayCommand extends ChannelSubCommand {
             if (lock != null) {
                 final VoiceChannel req = message.getGuild().getVoiceChannelById(lock.getAsString());
 
-                if (req != null && !member.getVoiceState().getChannel().equals(req)) {
+                if ((req != null) && !member.getVoiceState().getChannel().equals(req)) {
                     MusicManager.getLogger().fine("Rejected command because user not in locked voice channel");
                     this.reply(message, "You can only queue music in " + req.getName());
                     return;
@@ -82,7 +82,7 @@ class MusicPlayCommand extends ChannelSubCommand {
         }
 
         // URL logic
-        if (args.length == 1 && args[0].toLowerCase().startsWith("http")) {
+        if ((args.length == 1) && args[0].toLowerCase().startsWith("http")) {
             MusicManager.getLogger().info("Attempting to load URL " + args[0]);
             message.getChannel().sendTyping().queue();
             this.manager.getAudioPlayerManager().loadItemOrdered(server.getPlayer(), args[0], new LoadResults(server, this.manager, message));

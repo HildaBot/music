@@ -15,16 +15,6 @@
  */
 package ch.jamiete.hilda.music;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.Sanity;
 import ch.jamiete.hilda.Util;
@@ -38,6 +28,16 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.Role;
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 public class MusicManager {
     /**
@@ -47,11 +47,11 @@ public class MusicManager {
     /**
      * The maximum milliseconds a song can be.
      */
-    public static final long TIME_LIMIT = 3600000; // 1 hour
+    public static final long TIME_LIMIT = 3600000L; // 1 hour
     /**
      * The maximum milliseconds a song can be for a DJ.
      */
-    public static final long DJ_TIME_LIMIT = 10800000; // 3 hours
+    public static final long DJ_TIME_LIMIT = 10800000L; // 3 hours
     private static final Logger LOGGER = Logger.getLogger("Hilda-Music");
 
     /**
@@ -76,7 +76,7 @@ public class MusicManager {
     }
 
     public static String getFriendlyGuild(final Guild guild) {
-        return guild.getName() + " (" + guild.getId() + ")";
+        return guild.getName() + " (" + guild.getId() + ')';
     }
 
     /**
@@ -87,7 +87,7 @@ public class MusicManager {
     public static String getFriendlyTime(final AudioTrack track) {
         final StringBuilder sb = new StringBuilder();
 
-        if (!("" + track.getDuration()).equalsIgnoreCase("null")) { // TODO Not use a hacky workaround
+        if (!"null".equalsIgnoreCase("" + track.getDuration())) { // TODO Not use a hacky workaround
             sb.append(Util.getFriendlyTime(track.getDuration()));
         }
 
@@ -99,16 +99,16 @@ public class MusicManager {
      * @return The {@link Logger}.
      */
     public static Logger getLogger() {
-        return MusicManager.LOGGER;
+        return LOGGER;
     }
 
-    private int played = 0;
-    private int queued = 0;
+    private int played;
+    private int queued;
 
     private final Hilda hilda;
     private final HildaPlugin plugin;
     private final AudioPlayerManager playerManager;
-    private final ArrayList<MusicServer> servers = new ArrayList<>();
+    private final List<MusicServer> servers = new ArrayList<>();
     private final HashMap<Long, Long> recent = new HashMap<>();
 
     public MusicManager(final Hilda hilda, final HildaPlugin plugin) {
@@ -119,20 +119,20 @@ public class MusicManager {
         AudioSourceManagers.registerRemoteSources(this.playerManager);
         AudioSourceManagers.registerLocalSource(this.playerManager);
 
-        this.hilda.getExecutor().scheduleAtFixedRate(new MusicServerChecker(this), 15, 5, TimeUnit.MINUTES);
+        this.hilda.getExecutor().scheduleAtFixedRate(new MusicServerChecker(this), 15L, 5L, TimeUnit.MINUTES);
     }
 
     /**
      * Increment the number of songs played this session.
      */
-    public void addPlayed() {
+    public final void addPlayed() {
         this.played++;
     }
 
     /**
      * Increment the number of songs queued this session.
      */
-    public void addQueued() {
+    public final void addQueued() {
         this.queued++;
     }
 
@@ -140,7 +140,7 @@ public class MusicManager {
      * Add a recently shutdown server to the tracker.
      * @param id The server that recently shutdown.
      */
-    public void addRecent(final long id) {
+    public final void addRecent(final long id) {
         this.recent.put(id, System.currentTimeMillis());
     }
 
@@ -150,7 +150,7 @@ public class MusicManager {
      * @return A new {@link MusicServer}.
      * @throws IllegalArgumentException If the Guild already has a server associated with it.
      */
-    public MusicServer createServer(final Guild guild) {
+    public final MusicServer createServer(final Guild guild) {
         Sanity.truthiness(!this.hasServer(guild), "A server with the guild " + guild.getId() + " already exists.");
 
         final MusicServer server = new MusicServer(this, this.playerManager.createPlayer(), guild);
@@ -159,7 +159,7 @@ public class MusicManager {
             this.servers.add(server);
         }
 
-        this.hilda.getExecutor().schedule(new MusicStartupCheckerTask(server), 90, TimeUnit.SECONDS);
+        this.hilda.getExecutor().schedule(new MusicStartupCheckerTask(server), 90L, TimeUnit.SECONDS);
 
         return server;
     }
@@ -168,11 +168,11 @@ public class MusicManager {
      * Gets the AudioPlayerManager instance.
      * @return The AudioPlayerManager instance.
      */
-    public AudioPlayerManager getAudioPlayerManager() {
+    public final AudioPlayerManager getAudioPlayerManager() {
         return this.playerManager;
     }
 
-    public Hilda getHilda() {
+    public final Hilda getHilda() {
         return this.hilda;
     }
 
@@ -180,11 +180,11 @@ public class MusicManager {
      * Get the number of songs played this session.
      * @return The number of songs played this session.
      */
-    public int getPlayed() {
+    public final int getPlayed() {
         return this.played;
     }
 
-    public HildaPlugin getPlugin() {
+    public final HildaPlugin getPlugin() {
         return this.plugin;
     }
 
@@ -192,7 +192,7 @@ public class MusicManager {
      * Get the number of songs queued this session.
      * @return The number of songs queued this session.
      */
-    public int getQueued() {
+    public final int getQueued() {
         return this.queued;
     }
 
@@ -201,7 +201,7 @@ public class MusicManager {
      * @param id The server to check.
      * @return The time in milliseconds since the server last shutdown or {@code Long.MAX_VALUE} if it did not recently shutdown.
      */
-    public long getRecent(final long id) {
+    public final long getRecent(final long id) {
         return this.recent.getOrDefault(id, Long.MAX_VALUE);
     }
 
@@ -210,7 +210,7 @@ public class MusicManager {
      * @param guild The guild to test for.
      * @return The {@link MusicServer} related to the guild or {@code null} if no server exists.
      */
-    public MusicServer getServer(final Guild guild) {
+    public final MusicServer getServer(final Guild guild) {
         synchronized (this.servers) {
             for (final MusicServer server : this.servers) {
                 if (server.getGuild() == guild) {
@@ -226,7 +226,7 @@ public class MusicManager {
      * Lists the servers registered.
      * @return A {@link MusicServer} array containing all registered servers.
      */
-    public List<MusicServer> getServers() {
+    public final List<MusicServer> getServers() {
         synchronized (this.servers) {
             return Collections.unmodifiableList(this.servers);
         }
@@ -237,7 +237,7 @@ public class MusicManager {
      * @param guild The guild to test for.
      * @return Whether a server exists.
      */
-    public boolean hasServer(final Guild guild) {
+    public final boolean hasServer(final Guild guild) {
         return this.getServer(guild) != null;
     }
 
@@ -246,7 +246,7 @@ public class MusicManager {
      * @param message The message to test.
      * @return Whether the user who sent the message is a DJ.
      */
-    public boolean isDJ(final Message message) {
+    public static final boolean isDJ(final Message message) {
         final Member member = message.getGuild().getMember(message.getAuthor());
 
         if (member.hasPermission(Permission.ADMINISTRATOR) || member.hasPermission(Permission.MANAGE_SERVER)) {
@@ -266,7 +266,7 @@ public class MusicManager {
      * Remove the time the server last shutdown.
      * @param id The server to remove.
      */
-    public void removeRecent(final long id) {
+    public final void removeRecent(final long id) {
         this.recent.remove(id);
     }
 
@@ -274,7 +274,7 @@ public class MusicManager {
      * Forgets a server.
      * @param server The server to forget.
      */
-    public void removeServer(final MusicServer server) {
+    public final void removeServer(final MusicServer server) {
         synchronized (this.servers) {
             this.servers.remove(server);
         }

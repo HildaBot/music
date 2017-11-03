@@ -31,7 +31,7 @@ import net.dv8tion.jda.core.entities.VoiceChannel;
 class MusicAdminCommand extends ChannelSubCommand {
     private final MusicManager manager;
 
-    public MusicAdminCommand(final Hilda hilda, final ChannelSeniorCommand senior, final MusicManager manager) {
+    MusicAdminCommand(final Hilda hilda, final ChannelSeniorCommand senior, final MusicManager manager) {
         super(hilda, senior);
 
         this.manager = manager;
@@ -42,7 +42,7 @@ class MusicAdminCommand extends ChannelSubCommand {
     }
 
     @Override
-    public void execute(final Message message, final String[] args, final String label) {
+    public final void execute(final Message message, final String[] args, final String label) {
         final Configuration config = this.hilda.getConfigurationManager().getConfiguration(this.manager.getPlugin(), message.getGuild().getId());
 
         if (args.length == 0) {
@@ -50,7 +50,7 @@ class MusicAdminCommand extends ChannelSubCommand {
             return;
         }
 
-        if (args[0].equalsIgnoreCase("output")) {
+        if ("output".equalsIgnoreCase(args[0])) {
             if (args.length == 1) { // Provide current value
                 final JsonElement output = config.get().get("output");
 
@@ -80,7 +80,7 @@ class MusicAdminCommand extends ChannelSubCommand {
             }
         }
 
-        if (args[0].equalsIgnoreCase("lock")) {
+        if ("lock".equalsIgnoreCase(args[0])) {
             if (args.length == 1) { // Provide current value
                 final JsonElement output = config.get().get("lock");
 

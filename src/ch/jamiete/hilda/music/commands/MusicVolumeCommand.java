@@ -29,7 +29,7 @@ import net.dv8tion.jda.core.entities.Message;
 class MusicVolumeCommand extends ChannelSubCommand {
     private final MusicManager manager;
 
-    public MusicVolumeCommand(final Hilda hilda, final ChannelSeniorCommand senior, final MusicManager manager) {
+    MusicVolumeCommand(final Hilda hilda, final ChannelSeniorCommand senior, final MusicManager manager) {
         super(hilda, senior);
 
         this.manager = manager;
@@ -40,7 +40,7 @@ class MusicVolumeCommand extends ChannelSubCommand {
     }
 
     @Override
-    public void execute(final Message message, final String[] args, final String name) {
+    public final void execute(final Message message, final String[] args, final String name) {
         final Member member = message.getGuild().getMember(message.getAuthor());
         final MusicServer server = this.manager.getServer(message.getGuild());
 
@@ -50,11 +50,11 @@ class MusicVolumeCommand extends ChannelSubCommand {
         }
 
         if (args.length == 0) {
-            this.reply(message, "Volume currently at " + server.getPlayer().getVolume() + "%");
+            this.reply(message, "Volume currently at " + server.getPlayer().getVolume() + '%');
             return;
         }
 
-        if (!member.hasPermission(Permission.MANAGE_SERVER) && !this.manager.isDJ(message)) {
+        if (!member.hasPermission(Permission.MANAGE_SERVER) && !MusicManager.isDJ(message)) {
             this.reply(message, "You must be a DJ to use this command.");
             return;
         }
@@ -64,11 +64,11 @@ class MusicVolumeCommand extends ChannelSubCommand {
             return;
         }
 
-        int volume;
+        final int volume;
 
         try {
             volume = Integer.parseInt(args[0]);
-        } catch (final Exception e) {
+        } catch (final Exception ignored) {
             this.usage(message, "[volume 0–150]");
             return;
         }

@@ -30,7 +30,7 @@ public class QueueItem {
      * Gets the track held in the item.
      * @return The track.
      */
-    public AudioTrack getTrack() {
+    public final AudioTrack getTrack() {
         return this.track;
     }
 
@@ -38,13 +38,13 @@ public class QueueItem {
      * Gets the ID of the user who queued the item.
      * @return The user ID.
      */
-    public String getUserId() {
+    public final String getUserId() {
         return this.user;
     }
 
     @Override
-    public String toString() {
-        return "QueueItem{track=" + this.track.getIdentifier() + ", user=" + this.user + "}";
+    public final String toString() {
+        return "QueueItem{track=" + this.track.getIdentifier() + ", user=" + this.user + '}';
     }
 
 }
