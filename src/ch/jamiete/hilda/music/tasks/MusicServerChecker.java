@@ -30,20 +30,22 @@ public class MusicServerChecker extends TimerTask {
 
     @Override
     public final void run() {
-        for (final MusicServer server : this.manager.getServers()) {
-            server.prompt();
+        if (this.manager.getNumber() > 0) {
+            for (final MusicServer server : this.manager.getServers()) {
+                server.prompt();
 
-            if (server.isStopping()) {
-                return;
-            }
+                if (server.isStopping()) {
+                    continue;
+                }
 
-            if (server.getGuild().getAudioManager().isConnected() && (server.getGuild().getAudioManager().getConnectedChannel() != server.getChannel())) {
-                MusicManager.getLogger().info("Moved from " + server.getGuild().getAudioManager().getConnectedChannel().getName() + " to expected channel");
-                server.getGuild().getAudioManager().openAudioConnection(server.getChannel());
-            }
+                if (server.getGuild().getAudioManager().isConnected() && (server.getGuild().getAudioManager().getConnectedChannel() != server.getChannel())) {
+                    Hilda.getLogger().info("Moved from " + server.getGuild().getAudioManager().getConnectedChannel().getName() + " to expected channel");
+                    server.getGuild().getAudioManager().openAudioConnection(server.getChannel());
+                }
 
-            if (!server.getQueue().isEmpty() && (server.getPlayer().getPlayingTrack() == null)) {
-                server.play(server.getQueue().get(0));
+                if (!server.getQueue().isEmpty() && !server.isLeaveQueued() && (server.getPlayer().getPlayingTrack() == null)) {
+                    server.play(server.getQueue().get(0));
+                }
             }
         }
 

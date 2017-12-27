@@ -109,7 +109,13 @@ public class MusicManager {
         AudioSourceManagers.registerRemoteSources(this.playerManager);
         AudioSourceManagers.registerLocalSource(this.playerManager);
 
-        this.hilda.getExecutor().scheduleAtFixedRate(new MusicServerChecker(this), 15L, 5L, TimeUnit.MINUTES);
+        this.hilda.getExecutor().scheduleAtFixedRate(new MusicServerChecker(this), 15L, 1L, TimeUnit.MINUTES);
+    }
+
+    public int getNumber() {
+        synchronized (this.servers) {
+            return this.servers.size();
+        }
     }
 
     /**
