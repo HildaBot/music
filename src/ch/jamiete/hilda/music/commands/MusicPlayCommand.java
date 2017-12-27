@@ -85,7 +85,7 @@ class MusicPlayCommand extends ChannelSubCommand {
         if ((args.length == 1) && args[0].toLowerCase().startsWith("http")) {
             Hilda.getLogger().info("Attempting to load URL " + args[0]);
             message.getChannel().sendTyping().queue();
-            this.manager.getAudioPlayerManager().loadItemOrdered(server.getPlayer(), args[0], new LoadResults(server, this.manager, message));
+            this.manager.getAudioPlayerManager().loadItemOrdered(server.getPlayer(), args[0], new LoadResults(server, message));
             return;
         }
 
@@ -93,7 +93,7 @@ class MusicPlayCommand extends ChannelSubCommand {
         final String search = Util.combineSplit(0, args, " ");
         Hilda.getLogger().info("Attempting to search YouTube for " + search);
         message.getChannel().sendTyping().queue();
-        this.manager.getAudioPlayerManager().loadItemOrdered(server.getPlayer(), "ytsearch:" + search, new LoadResults(server, this.manager, message, true));
+        this.manager.getAudioPlayerManager().loadItemOrdered(server.getPlayer(), "ytsearch:" + search, new LoadResults(server, message, true));
     }
 
 }

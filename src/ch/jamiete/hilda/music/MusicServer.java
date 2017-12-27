@@ -187,26 +187,6 @@ public class MusicServer extends AudioEventAdapter {
     }
 
     /**
-     * Gets the list of queue items in debug format. <br>
-     * For example: [track=afds909,user=034092if09i]
-     * @return The list of queue items.
-     */
-    private String getQueueNames() {
-        final StringBuilder sb = new StringBuilder();
-
-        synchronized (this.queue) {
-            for (final QueueItem q : this.queue) {
-                sb.append('[').append("track=");
-                sb.append(q.getTrack().getIdentifier()).append(", ");
-                sb.append("user=").append(q.getUserId());
-                sb.append("] ");
-            }
-        }
-
-        return sb.toString().trim();
-    }
-
-    /**
      * Helper method. <br>
      * Returns the self user of the bot in member form.
      * @return self user of bot

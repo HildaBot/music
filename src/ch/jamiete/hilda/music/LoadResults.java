@@ -29,18 +29,16 @@ import net.dv8tion.jda.core.entities.Message;
 
 public class LoadResults implements AudioLoadResultHandler {
     private final MusicServer server;
-    private final MusicManager manager;
     private final Message message;
     private final Member member;
     private final boolean search;
 
-    public LoadResults(final MusicServer server, final MusicManager manager, final Message message) {
-        this(server, manager, message, false);
+    public LoadResults(final MusicServer server, final Message message) {
+        this(server, message, false);
     }
 
-    public LoadResults(final MusicServer server, final MusicManager manager, final Message message, final boolean search) {
+    public LoadResults(final MusicServer server, final Message message, final boolean search) {
         this.server = server;
-        this.manager = manager;
         this.message = message;
         this.member = message.getGuild().getMember(message.getAuthor());
         this.search = search;
