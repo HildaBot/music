@@ -15,17 +15,17 @@
  */
 package ch.jamiete.hilda.music;
 
+import java.util.List;
+import java.util.logging.Level;
+import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
+import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
+import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.Util;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
-import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
-import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
-import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import java.util.List;
-import java.util.logging.Level;
 
 public class LoadResults implements AudioLoadResultHandler {
     private final MusicServer server;
@@ -55,7 +55,7 @@ public class LoadResults implements AudioLoadResultHandler {
         } else if (e.getMessage().startsWith("This video is not available")) {
             this.reply("That track is not available to me and cannot be played.");
         } else {
-            MusicManager.getLogger().log(Level.WARNING, "Couldn't load track in " + MusicManager.getFriendlyGuild(this.message.getGuild()), e);
+            Hilda.getLogger().log(Level.WARNING, "Couldn't load track in " + MusicManager.getFriendlyGuild(this.message.getGuild()), e);
             this.reply("I couldn't load that track: " + e.getMessage() + '.');
             Hilda.getLogger().log(Level.WARNING, "Couldn't load track in " + MusicManager.getFriendlyGuild(this.message.getGuild()), e);
         }
@@ -65,23 +65,23 @@ public class LoadResults implements AudioLoadResultHandler {
 
     @Override
     public final void noMatches() {
-        MusicManager.getLogger().info("Failed to find anything for query " + this.message.getContent());
+        Hilda.getLogger().info("Failed to find anything for query " + this.message.getContent());
         this.reply("I couldn't find anything matching that query.");
         this.server.prompt();
     }
 
     @Override
     public final void playlistLoaded(final AudioPlaylist playlist) {
-        MusicManager.getLogger().fine("Loaded a playlist");
+        Hilda.getLogger().fine("Loaded a playlist");
 
         if (this.search) {
-            MusicManager.getLogger().fine("Playlist came from a search query!");
+            Hilda.getLogger().fine("Playlist came from a search query!");
             this.tryLoadTrack(playlist.getTracks().get(0));
             return;
         }
 
         if (MusicManager.isDJ(this.message)) {
-            MusicManager.getLogger().info("Queuing songs for DJ/admin...");
+            Hilda.getLogger().info("Queuing songs for DJ/admin...");
             long duration = 0L;
             final long previous = this.server.getDuration();
             int queued = 0;
@@ -120,9 +120,9 @@ public class LoadResults implements AudioLoadResultHandler {
             }
 
             this.reply(sb.toString());
-            MusicManager.getLogger().info("Queued " + queued + '/' + playlist.getTracks().size());
+            Hilda.getLogger().info("Queued " + queued + '/' + playlist.getTracks().size());
         } else {
-            MusicManager.getLogger().fine("Trying to queue first from playlist for non-DJ...");
+            Hilda.getLogger().fine("Trying to queue first from playlist for non-DJ...");
             this.tryLoadTrack(playlist.getTracks().get(0));
         }
     }
@@ -133,27 +133,27 @@ public class LoadResults implements AudioLoadResultHandler {
 
     @Override
     public final void trackLoaded(final AudioTrack track) {
-        MusicManager.getLogger().fine("Loaded a track");
+        Hilda.getLogger().fine("Loaded a track");
         this.tryLoadTrack(track);
     }
 
     private void tryLoadTrack(final AudioTrack track) {
         if (this.server.isQueued(track)) {
-            MusicManager.getLogger().fine("Song already queued.");
+            Hilda.getLogger().fine("Song already queued.");
             this.reply("That song is already queued.");
             this.server.prompt();
             return;
         }
 
         if (this.server.isQueueFull()) {
-            MusicManager.getLogger().fine("Queue full");
+            Hilda.getLogger().fine("Queue full");
             this.reply("There is no space left in the queue!");
             this.server.prompt();
             return;
         }
 
         if ((MusicManager.isDJ(this.message) && (track.getDuration() > MusicManager.DJ_TIME_LIMIT)) || (!MusicManager.isDJ(this.message) && (track.getDuration() > MusicManager.TIME_LIMIT))) {
-            MusicManager.getLogger().fine("Song too long; " + track.getDuration() + ">" + MusicManager.TIME_LIMIT + ".");
+            Hilda.getLogger().fine("Song too long; " + track.getDuration() + ">" + MusicManager.TIME_LIMIT + ".");
             this.reply("The song is too long to be queued.");
             this.server.prompt();
             return;
@@ -182,7 +182,7 @@ public class LoadResults implements AudioLoadResultHandler {
 
         this.reply(Util.sanitise(sb.toString()));
         this.server.queue(new QueueItem(track, this.member.getUser().getId()));
-        MusicManager.getLogger().fine("Queued a song");
+        Hilda.getLogger().fine("Queued a song");
     }
 
 }

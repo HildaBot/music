@@ -52,7 +52,7 @@ class MusicPlayCommand extends ChannelSubCommand {
 
         // User requirement logic
         if (!member.getVoiceState().inVoiceChannel()) {
-            MusicManager.getLogger().fine("Rejected command because user not in voice channel");
+            Hilda.getLogger().fine("Rejected command because user not in voice channel");
             this.reply(message, "You must be in a voice channel to queue music.");
             return;
         }
@@ -66,7 +66,7 @@ class MusicPlayCommand extends ChannelSubCommand {
                 final VoiceChannel req = message.getGuild().getVoiceChannelById(lock.getAsString());
 
                 if ((req != null) && !member.getVoiceState().getChannel().equals(req)) {
-                    MusicManager.getLogger().fine("Rejected command because user not in locked voice channel");
+                    Hilda.getLogger().fine("Rejected command because user not in locked voice channel");
                     this.reply(message, "You can only queue music in " + req.getName());
                     return;
                 }
@@ -75,7 +75,7 @@ class MusicPlayCommand extends ChannelSubCommand {
             server.setChannel(member.getVoiceState().getChannel()); // Join channel
         } else {
             if (server.getChannel() != member.getVoiceState().getChannel()) {
-                MusicManager.getLogger().fine("Rejected command because user not in same voice channel");
+                Hilda.getLogger().fine("Rejected command because user not in same voice channel");
                 this.reply(message, "You must be in the same voice channel as me to queue music.");
                 return;
             }
@@ -83,7 +83,7 @@ class MusicPlayCommand extends ChannelSubCommand {
 
         // URL logic
         if ((args.length == 1) && args[0].toLowerCase().startsWith("http")) {
-            MusicManager.getLogger().info("Attempting to load URL " + args[0]);
+            Hilda.getLogger().info("Attempting to load URL " + args[0]);
             message.getChannel().sendTyping().queue();
             this.manager.getAudioPlayerManager().loadItemOrdered(server.getPlayer(), args[0], new LoadResults(server, this.manager, message));
             return;
@@ -91,7 +91,7 @@ class MusicPlayCommand extends ChannelSubCommand {
 
         // Search logic
         final String search = Util.combineSplit(0, args, " ");
-        MusicManager.getLogger().info("Attempting to search YouTube for " + search);
+        Hilda.getLogger().info("Attempting to search YouTube for " + search);
         message.getChannel().sendTyping().queue();
         this.manager.getAudioPlayerManager().loadItemOrdered(server.getPlayer(), "ytsearch:" + search, new LoadResults(server, this.manager, message, true));
     }

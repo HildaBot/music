@@ -15,6 +15,15 @@
  */
 package ch.jamiete.hilda.music;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.Sanity;
 import ch.jamiete.hilda.Util;
@@ -28,16 +37,6 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.Role;
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
 public class MusicManager {
     /**
@@ -52,7 +51,6 @@ public class MusicManager {
      * The maximum milliseconds a song can be for a DJ.
      */
     public static final long DJ_TIME_LIMIT = 10800000L; // 3 hours
-    private static final Logger LOGGER = Logger.getLogger("Hilda-Music");
 
     /**
      * Converts an {@link AudioTrack} to a human-readable {@link String}.
@@ -92,14 +90,6 @@ public class MusicManager {
         }
 
         return sb.toString().trim();
-    }
-
-    /**
-     * Gets the {@link Logger} to be used by music commands.
-     * @return The {@link Logger}.
-     */
-    public static Logger getLogger() {
-        return LOGGER;
     }
 
     private int played;

@@ -15,6 +15,7 @@
  */
 package ch.jamiete.hilda.music;
 
+import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.Util;
 import ch.jamiete.hilda.configuration.Configuration;
 import ch.jamiete.hilda.events.EventHandler;
@@ -311,7 +312,7 @@ public class MusicServer extends AudioEventAdapter {
 
             if (event.getChannelLeft() == this.channel) {
                 if (this.getUsers() == 0) {
-                    MusicManager.getLogger().fine("Stopping because all users left the channel");
+                    Hilda.getLogger().fine("Stopping because all users left the channel");
                     this.shutdown();
                     this.player.stopTrack();
                     this.prompt();
@@ -322,7 +323,7 @@ public class MusicServer extends AudioEventAdapter {
                 }
 
                 if (this.shouldSkip()) {
-                    MusicManager.getLogger().fine("Skipping because a user left the channel");
+                    Hilda.getLogger().fine("Skipping because a user left the channel");
                     this.sendMessage("Skipping because user leaving changed skip count...");
                     this.player.stopTrack();
                 }
@@ -342,7 +343,7 @@ public class MusicServer extends AudioEventAdapter {
 
             if (event.getChannelLeft() == this.channel) {
                 if (this.getUsers() == 0) {
-                    MusicManager.getLogger().fine("Stopping because the last user moved from the channel");
+                    Hilda.getLogger().fine("Stopping because the last user moved from the channel");
                     this.shutdown();
                 }
 
@@ -351,7 +352,7 @@ public class MusicServer extends AudioEventAdapter {
                 }
 
                 if (this.shouldSkip()) {
-                    MusicManager.getLogger().fine("Skipping because a user moved from the channel");
+                    Hilda.getLogger().fine("Skipping because a user moved from the channel");
                     this.sendMessage("Skipping because user leaving changed skip count...");
                     this.player.stopTrack();
                 }
@@ -367,12 +368,12 @@ public class MusicServer extends AudioEventAdapter {
 
             if (event.getMember() == this.getSelf()) {
                 if (this.getSelf().hasPermission(this.channel, Permission.VOICE_MUTE_OTHERS)) {
-                    MusicManager.getLogger().fine("Skipping because I was muted");
+                    Hilda.getLogger().fine("Skipping because I was muted");
                     this.sendMessage("Skipping song because I was muted...");
                     this.guild.getController().setMute(this.getSelf(), false).queue();
                     this.player.stopTrack();
                 } else {
-                    MusicManager.getLogger().fine("Stopping because I was muted and didn't have permission");
+                    Hilda.getLogger().fine("Stopping because I was muted and didn't have permission");
                     this.sendMessage("Stopping playback because I was muted...");
                     this.shutdown();
                 }
@@ -388,7 +389,7 @@ public class MusicServer extends AudioEventAdapter {
                 }
 
                 if (this.shouldSkip()) {
-                    MusicManager.getLogger().fine("Skipping because a user became deafened");
+                    Hilda.getLogger().fine("Skipping because a user became deafened");
                     this.sendMessage("Skipping because user deafening changed skip count...");
                     this.player.stopTrack();
                 }
@@ -398,15 +399,15 @@ public class MusicServer extends AudioEventAdapter {
 
     @Override
     public final void onTrackEnd(final AudioPlayer player, final AudioTrack track, final AudioTrackEndReason endReason) {
-        MusicManager.getLogger().fine("Track ended " + track.getIdentifier());
+        Hilda.getLogger().fine("Track ended " + track.getIdentifier());
 
         if (this.stopping) {
-            MusicManager.getLogger().fine("Stopping, so giving up...");
+            Hilda.getLogger().fine("Stopping, so giving up...");
             return;
         }
 
         if (this.queue.isEmpty()) {
-            MusicManager.getLogger().fine("Queue was empty...");
+            Hilda.getLogger().fine("Queue was empty...");
 
             final StringBuilder sb = new StringBuilder();
             sb.append("Queue concluded.");
@@ -422,7 +423,7 @@ public class MusicServer extends AudioEventAdapter {
         }
 
         if (this.isQueued(track)) {
-            MusicManager.getLogger().fine("Track was still in queue; deleting.");
+            Hilda.getLogger().fine("Track was still in queue; deleting.");
             synchronized (this.queue) {
                 for (final QueueItem item : this.queue) {
                     if (item.getTrack().equals(track)) {
@@ -433,7 +434,7 @@ public class MusicServer extends AudioEventAdapter {
         }
 
         if (endReason.mayStartNext || (endReason == AudioTrackEndReason.STOPPED)) {
-            MusicManager.getLogger().fine("Starting next song...");
+            Hilda.getLogger().fine("Starting next song...");
             this.play(this.queue.get(0));
         }
     }
@@ -443,12 +444,12 @@ public class MusicServer extends AudioEventAdapter {
         this.setGame(null);
 
         if (exception.getCause() instanceof UnsatisfiedLinkError) {
-            MusicManager.getLogger().warning("Encountered song I didn't know how to play.");
+            Hilda.getLogger().warning("Encountered song I didn't know how to play.");
             this.sendMessage("I don't know how to play that type of file; skipping.");
         } else if (exception.getMessage().startsWith("This video contains content from")) {
             this.sendMessage("That track has been restricted by the copyright holder and cannot be played.");
         } else {
-            MusicManager.getLogger().log(Level.WARNING, "Encountered an exception while playing " + track.getIdentifier() + " in " + this.guild.getName() + "...", exception);
+            Hilda.getLogger().log(Level.WARNING, "Encountered an exception while playing " + track.getIdentifier() + " in " + this.guild.getName() + "...", exception);
             this.sendMessage("Track exception (" + exception.getMessage() + "); skipping.");
         }
 
@@ -457,7 +458,7 @@ public class MusicServer extends AudioEventAdapter {
 
     @Override
     public final void onTrackStart(final AudioPlayer player, final AudioTrack track) {
-        MusicManager.getLogger().fine("Track began " + track.getIdentifier());
+        Hilda.getLogger().fine("Track began " + track.getIdentifier());
 
         this.skips.clear();
         this.manager.addPlayed();
@@ -474,7 +475,7 @@ public class MusicServer extends AudioEventAdapter {
 
     @Override
     public final void onTrackStuck(final AudioPlayer player, final AudioTrack track, final long thresholdMs) {
-        MusicManager.getLogger().warning("Track " + track.getIdentifier() + " got stuck in " + this.guild.getName() + "; skipping...");
+        Hilda.getLogger().warning("Track " + track.getIdentifier() + " got stuck in " + this.guild.getName() + "; skipping...");
         this.sendMessage("Track stuck; skipping.");
         this.play(this.queue.get(0));
     }
@@ -484,7 +485,7 @@ public class MusicServer extends AudioEventAdapter {
      * @param item The item to play.
      */
     public final void play(final QueueItem item) {
-        MusicManager.getLogger().info("Playing a song in " + this.guild.getName() + ' ' + this.guild.getId() + ' ' + item);
+        Hilda.getLogger().info("Playing a song in " + this.guild.getName() + ' ' + this.guild.getId() + ' ' + item);
 
         if (this.task != null) {
             this.task.cancel(false);
@@ -515,15 +516,15 @@ public class MusicServer extends AudioEventAdapter {
             return;
         }
 
-        MusicManager.getLogger().fine("Deciding whether to shut down...");
+        Hilda.getLogger().fine("Deciding whether to shut down...");
 
         if ((this.player.getPlayingTrack() == null) && this.queue.isEmpty()) {
-            MusicManager.getLogger().fine("Shutting down because there's nothing playing...");
+            Hilda.getLogger().fine("Shutting down because there's nothing playing...");
             this.shutdown();
             return;
         }
 
-        MusicManager.getLogger().fine("Decided not to.");
+        Hilda.getLogger().fine("Decided not to.");
     }
 
     /**
@@ -540,7 +541,7 @@ public class MusicServer extends AudioEventAdapter {
      * @param front Whether the item should be placed at the top of the queue.
      */
     private void queue(final QueueItem queue, final boolean front) {
-        MusicManager.getLogger().fine("Queueing " + queue);
+        Hilda.getLogger().fine("Queueing " + queue);
 
         if (this.now == null) {
             this.play(queue);
@@ -606,14 +607,14 @@ public class MusicServer extends AudioEventAdapter {
                 if (chan.isPresent()) {
                     channel = chan.get();
                 } else {
-                    MusicManager.getLogger().severe("Couldn't find any channels to talk to in " + this.guild.getName() + ' ' + this.guild.getId() + "; leaving...");
+                    Hilda.getLogger().severe("Couldn't find any channels to talk to in " + this.guild.getName() + ' ' + this.guild.getId() + "; leaving...");
                     this.shutdown();
                     return;
                 }
             }
         }
 
-        MusicManager.getLogger().fine("Sending a message; decided to use " + channel.getName() + "...");
+        Hilda.getLogger().fine("Sending a message; decided to use " + channel.getName() + "...");
         channel.sendMessage(Util.sanitise(message)).queue();
     }
 
@@ -624,10 +625,10 @@ public class MusicServer extends AudioEventAdapter {
      * @param channel The channel to use.
      */
     public final void setChannel(final VoiceChannel channel) {
-        MusicManager.getLogger().fine("Setting channel to " + channel.getName());
+        Hilda.getLogger().fine("Setting channel to " + channel.getName());
 
         if (this.channel != null) {
-            MusicManager.getLogger().fine("Was already in a channel; leaving...");
+            Hilda.getLogger().fine("Was already in a channel; leaving...");
 
             if (this.guild.getAudioManager().isConnected()) {
                 this.guild.getAudioManager().closeAudioConnection();
@@ -640,7 +641,7 @@ public class MusicServer extends AudioEventAdapter {
         try {
             this.guild.getAudioManager().openAudioConnection(channel);
         } catch (final PermissionException ignored) {
-            MusicManager.getLogger().info("Couldn't connect to a voice channel in " + this.guild.getName() + ' ' + this.guild.getId() + "; shutting down...");
+            Hilda.getLogger().info("Couldn't connect to a voice channel in " + this.guild.getName() + ' ' + this.guild.getId() + "; shutting down...");
             this.sendMessage("I couldn't connect to the voice channel; aborting.");
             this.shutdown();
         }
@@ -658,7 +659,7 @@ public class MusicServer extends AudioEventAdapter {
      * @param set The name to be displayed, or null to reset.
      */
     private void setGame(final String set) {
-        MusicManager.getLogger().fine("Queueing game to " + set);
+        Hilda.getLogger().fine("Queueing game to " + set);
         final Game game = this.manager.getHilda().getBot().getPresence().getGame();
 
         if ((set == null) && (this.lastplaying == null)) {
@@ -717,7 +718,7 @@ public class MusicServer extends AudioEventAdapter {
             return;
         }
 
-        MusicManager.getLogger().info("Shutting down " + this.guild.getName() + ' ' + this.guild.getId() + "...");
+        Hilda.getLogger().info("Shutting down " + this.guild.getName() + ' ' + this.guild.getId() + "...");
 
         this.stopping = true;
         this.manager.getHilda().getBot().removeEventListener(this);

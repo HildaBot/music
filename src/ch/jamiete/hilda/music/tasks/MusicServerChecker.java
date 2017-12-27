@@ -16,6 +16,7 @@
 package ch.jamiete.hilda.music.tasks;
 
 import java.util.TimerTask;
+import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.music.MusicManager;
 import ch.jamiete.hilda.music.MusicServer;
 import net.dv8tion.jda.core.entities.Guild;
@@ -50,7 +51,7 @@ public class MusicServerChecker extends TimerTask {
             final MusicServer server = this.manager.getServer(guild);
 
             if (guild.getAudioManager().isConnected() && (server == null)) {
-                MusicManager.getLogger().info("Disconnecting from voice chat in untracked server " + guild.getName());
+                Hilda.getLogger().info("Disconnecting from voice chat in untracked server " + guild.getName());
                 guild.getAudioManager().closeAudioConnection();
             }
         }

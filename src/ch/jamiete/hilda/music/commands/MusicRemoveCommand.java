@@ -53,13 +53,13 @@ class MusicRemoveCommand extends ChannelSubCommand {
         final List<QueueItem> queue = server.getQueue();
 
         if ((member.getVoiceState().getChannel() != server.getChannel()) && !MusicManager.isDJ(message)) {
-            MusicManager.getLogger().fine("Rejected command because user not in my voice channel");
+            Hilda.getLogger().fine("Rejected command because user not in my voice channel");
             this.reply(message, "You must be in the same voice channel as me to skip.");
             return;
         }
 
         if (queue.isEmpty()) {
-            MusicManager.getLogger().fine("Rejected command because no tracks queued");
+            Hilda.getLogger().fine("Rejected command because no tracks queued");
             this.reply(message, "There isn't anything queued.");
             return;
         }

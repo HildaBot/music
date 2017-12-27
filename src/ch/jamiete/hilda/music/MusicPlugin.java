@@ -62,35 +62,35 @@ public class MusicPlugin extends HildaPlugin {
     }
 
     public static final void setupLogging() {
-        MusicManager.getLogger().setUseParentHandlers(false);
+        Hilda.getLogger().setUseParentHandlers(false);
 
-        for (final Handler handler : MusicManager.getLogger().getHandlers()) {
+        for (final Handler handler : Hilda.getLogger().getHandlers()) {
             if (handler instanceof ConsoleHandler) {
-                MusicManager.getLogger().removeHandler(handler);
+                Hilda.getLogger().removeHandler(handler);
             }
         }
 
         final ConsoleHandler handler = new ConsoleHandler();
         handler.setFormatter(new LogFormat());
-        MusicManager.getLogger().addHandler(handler);
+        Hilda.getLogger().addHandler(handler);
 
         try {
             final File file = new File("log");
 
             if (!file.isDirectory() && !file.mkdir()) {
-                MusicManager.getLogger().warning("Attempted to make a folder but failed. Something might go wrong.");
+                Hilda.getLogger().warning("Attempted to make a folder but failed. Something might go wrong.");
             }
 
             final FileHandler lfh = new FileHandler("log/hilda_music_" + new SimpleDateFormat("dd-MM-yyyy").format(Calendar.getInstance().getTime()) + ".log", true);
             lfh.setFormatter(new LogFormat());
-            MusicManager.getLogger().addHandler(lfh);
+            Hilda.getLogger().addHandler(lfh);
         } catch (final Exception e) {
             Hilda.getLogger().log(Level.WARNING, "Encountered an exception while initialising music logger", e);
         }
 
         if (Start.DEBUG) {
             handler.setLevel(Level.FINE);
-            MusicManager.getLogger().setLevel(Level.FINE);
+            Hilda.getLogger().setLevel(Level.FINE);
         }
     }
 

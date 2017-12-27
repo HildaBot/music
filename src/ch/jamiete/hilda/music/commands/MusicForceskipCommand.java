@@ -58,7 +58,7 @@ class MusicForceskipCommand extends ChannelSubCommand {
         }
 
         if (server.getPlayer().getPlayingTrack() == null) {
-            MusicManager.getLogger().info("Queue was stuck!");
+            Hilda.getLogger().info("Queue was stuck!");
             server.play(server.getQueue().get(0));
             this.reply(message, "Oops! Skipping...");
         } else {
