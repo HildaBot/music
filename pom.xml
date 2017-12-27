@@ -21,6 +21,7 @@
     <groupId>ch.jamiete.hilda</groupId>
     <artifactId>music</artifactId>
     <version>1.0.6</version>
+    <packaging>jar</packaging>
     
     <dependencies>
         <dependency>
@@ -58,7 +59,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>2.4.3</version>
+                <version>3.1.0</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -67,6 +68,13 @@
                         </goals>
                         <configuration>
                         	<createDependencyReducedPom>false</createDependencyReducedPom>
+                        	<artifactSet>
+                        		<excludes>
+                        			<exclude>net.dv8tion:JDA</exclude>
+                        			<exclude>ch.jamiete.hilda:Hilda</exclude>
+                        		</excludes>
+                        	</artifactSet>
+                        	<minimizeJar>true</minimizeJar>
                         </configuration>
                     </execution>
                 </executions>
