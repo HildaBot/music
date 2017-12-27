@@ -70,7 +70,7 @@ public class MusicManager {
             mb.append(track.getIdentifier());
         }
 
-        return mb.build().getContent().trim();
+        return mb.build().getContentRaw().trim();
     }
 
     public static String getFriendlyGuild(final Guild guild) {

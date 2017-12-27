@@ -63,7 +63,7 @@ public class LoadResults implements AudioLoadResultHandler {
 
     @Override
     public final void noMatches() {
-        Hilda.getLogger().info("Failed to find anything for query " + this.message.getContent());
+        Hilda.getLogger().info("Failed to find anything for query " + this.message.getContentDisplay());
         this.reply("I couldn't find anything matching that query.");
         this.server.prompt();
     }

@@ -35,7 +35,6 @@ import ch.jamiete.hilda.configuration.Configuration;
 import ch.jamiete.hilda.events.EventHandler;
 import ch.jamiete.hilda.music.tasks.MusicLeaveTask;
 import ch.jamiete.hilda.runnables.GameSetTask;
-import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.entities.Guild;
@@ -212,7 +211,7 @@ public class MusicServer extends AudioEventAdapter {
             return null;
         }
 
-        return new MessageBuilder().append(MusicManager.getFriendly(this.now.getTrack())).build().getStrippedContent();
+        return Util.strip(MusicManager.getFriendly(this.now.getTrack()));
     }
 
     /**
