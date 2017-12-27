@@ -302,7 +302,7 @@ public class MusicServer extends AudioEventAdapter {
 
     @EventHandler
     public final void onEvent(final Event e) {
-        if (this.stopping) {
+        if (this.stopping || this.isLeaveQueued()) {
             return;
         }
 
