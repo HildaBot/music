@@ -20,13 +20,13 @@
     
     <groupId>ch.jamiete.hilda</groupId>
     <artifactId>music</artifactId>
-    <version>1.0.5</version>
+    <version>1.0.6</version>
     
     <dependencies>
         <dependency>
             <groupId>ch.jamiete.hilda</groupId>
             <artifactId>Hilda</artifactId>
-            <version>1.1.6</version>
+            <version>1.1.5</version>
         </dependency>
         <dependency>
         	<groupId>com.sedmelluq</groupId>
