@@ -228,7 +228,8 @@ public class MusicManager {
      */
     public final List<MusicServer> getServers() {
         synchronized (this.servers) {
-            return Collections.unmodifiableList(this.servers);
+            List<MusicServer> servers = new ArrayList<>(this.servers);
+            return Collections.unmodifiableList(servers);
         }
     }
 
