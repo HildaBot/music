@@ -260,7 +260,7 @@ public class MusicServer extends AudioEventAdapter {
      * Gets whether this server is queued to leave.
      * @return whether leave queued
      */
-    private boolean isLeaveQueued() {
+    public boolean isLeaveQueued() {
         return this.task != null;
     }
 
