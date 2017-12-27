@@ -15,6 +15,20 @@
  */
 package ch.jamiete.hilda.music;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.stream.Collectors;
+import com.google.gson.JsonElement;
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
+import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
+import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.Util;
 import ch.jamiete.hilda.configuration.Configuration;
@@ -34,20 +48,6 @@ import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMuteEvent;
 import net.dv8tion.jda.core.exceptions.PermissionException;
-import com.google.gson.JsonElement;
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
-import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 /**
  * This class represents a {@link net.dv8tion.jda.core.entities.Guild Guild} that music is being played on.
@@ -68,7 +68,7 @@ public class MusicServer extends AudioEventAdapter {
 
     private QueueItem now = null;
 
-     private String lastplaying = null;
+    private String lastplaying = null;
 
     public MusicServer(final MusicManager manager, final AudioPlayer player, final Guild guild) {
         this.manager = manager;
@@ -302,7 +302,7 @@ public class MusicServer extends AudioEventAdapter {
     }
 
     @EventHandler
-    public final void onEvent(final Event e) {
+    public void onEvent(final Event e) {
         if (this.stopping || this.isLeaveQueued()) {
             return;
         }
