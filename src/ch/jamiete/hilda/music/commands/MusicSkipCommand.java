@@ -15,14 +15,16 @@
  */
 package ch.jamiete.hilda.music.commands;
 
+import java.util.Collections;
+import java.util.List;
 import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.commands.ChannelSeniorCommand;
 import ch.jamiete.hilda.commands.ChannelSubCommand;
 import ch.jamiete.hilda.music.MusicManager;
 import ch.jamiete.hilda.music.MusicServer;
+import ch.jamiete.hilda.music.QueueItem;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
-import java.util.Collections;
 
 class MusicSkipCommand extends ChannelSubCommand {
     private final MusicManager manager;
@@ -71,7 +73,8 @@ class MusicSkipCommand extends ChannelSubCommand {
 
         if ((server.getPlayer().getPlayingTrack() == null) && !server.getQueue().isEmpty()) {
             Hilda.getLogger().info("The queue was stuck!");
-            server.play(server.getQueue().get(0));
+            List<QueueItem> queue = server.getQueue();
+            server.play(queue.isEmpty() ? null : queue.get(0));
             this.reply(message, "Oops! Skipping...");
             return;
         }
