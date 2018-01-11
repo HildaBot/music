@@ -181,7 +181,7 @@ public class MusicServer extends AudioEventAdapter {
      */
     public final List<QueueItem> getQueue() {
         synchronized (this.queue) {
-            return Collections.unmodifiableList(this.queue);
+            return Util.unmodifiableList(this.queue);
         }
     }
 

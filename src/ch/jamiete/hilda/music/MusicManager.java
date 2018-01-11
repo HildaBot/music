@@ -16,7 +16,6 @@
 package ch.jamiete.hilda.music;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -224,8 +223,7 @@ public class MusicManager {
      */
     public final List<MusicServer> getServers() {
         synchronized (this.servers) {
-            List<MusicServer> servers = new ArrayList<>(this.servers);
-            return Collections.unmodifiableList(servers);
+            return Util.unmodifiableList(this.servers);
         }
     }
 
