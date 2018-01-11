@@ -16,7 +16,6 @@
 package ch.jamiete.hilda.music.commands;
 
 import java.util.Collections;
-
 import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.commands.ChannelSeniorCommand;
 import ch.jamiete.hilda.commands.ChannelSubCommand;
@@ -40,7 +39,7 @@ class MusicVolumeCommand extends ChannelSubCommand {
     }
 
     @Override
-    public final void execute(final Message message, final String[] args, final String name) {
+    public final void execute(final Message message, final String[] args, final String label) {
         final Member member = message.getGuild().getMember(message.getAuthor());
         final MusicServer server = this.manager.getServer(message.getGuild());
 
@@ -69,7 +68,7 @@ class MusicVolumeCommand extends ChannelSubCommand {
         try {
             volume = Integer.parseInt(args[0]);
         } catch (final Exception ignored) {
-            this.usage(message, "[volume 0–150]");
+            this.usage(message, "[volume 0–150]", label);
             return;
         }
 
