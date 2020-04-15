@@ -29,13 +29,12 @@ import ch.jamiete.hilda.Util;
 import ch.jamiete.hilda.music.tasks.MusicServerChecker;
 import ch.jamiete.hilda.music.tasks.MusicStartupCheckerTask;
 import ch.jamiete.hilda.plugins.HildaPlugin;
-import net.dv8tion.jda.core.MessageBuilder;
-import net.dv8tion.jda.core.MessageBuilder.Formatting;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.Role;
+import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.Role;
 
 public class MusicManager {
     /**
@@ -60,10 +59,10 @@ public class MusicManager {
         final MessageBuilder mb = new MessageBuilder();
 
         if (track.getInfo().title != null) {
-            mb.append(track.getInfo().title.replaceAll("\\*", "\\\\*"), Formatting.BOLD);
+            mb.append(track.getInfo().title.replaceAll("\\*", "\\\\*"), MessageBuilder.Formatting.BOLD);
 
             if (track.getInfo().author != null) {
-                mb.append(" by ").append(track.getInfo().author.replaceAll("\\*", "\\\\*"), Formatting.BOLD);
+                mb.append(" by ").append(track.getInfo().author.replaceAll("\\*", "\\\\*"), MessageBuilder.Formatting.BOLD);
             }
         } else {
             mb.append(track.getIdentifier());
@@ -241,7 +240,7 @@ public class MusicManager {
      * @param message The message to test.
      * @return Whether the user who sent the message is a DJ.
      */
-    public static final boolean isDJ(final Message message) {
+    public static boolean isDJ(final Message message) {
         final Member member = message.getGuild().getMember(message.getAuthor());
 
         if (member.hasPermission(Permission.ADMINISTRATOR) || member.hasPermission(Permission.MANAGE_SERVER)) {

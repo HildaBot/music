@@ -22,11 +22,9 @@ import ch.jamiete.hilda.commands.ChannelSubCommand;
 import ch.jamiete.hilda.music.MusicManager;
 import ch.jamiete.hilda.music.MusicServer;
 import ch.jamiete.hilda.music.QueueItem;
-import net.dv8tion.jda.core.MessageBuilder;
-import net.dv8tion.jda.core.MessageBuilder.Formatting;
-import net.dv8tion.jda.core.MessageBuilder.SplitPolicy;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
 import org.apache.commons.lang3.StringUtils;
 import java.util.Arrays;
 import java.util.Collections;
@@ -60,7 +58,7 @@ class MusicQueueCommand extends ChannelSubCommand {
 
         if (args.length == 1) {
             if (StringUtils.isNumeric(args[0])) {
-                page = Integer.valueOf(args[0]) - 1;
+                page = Integer.parseInt(args[0]) - 1;
                 queue_code = page * pageSize;
             } else {
                 this.usage(message, "[page]", label);
@@ -99,7 +97,7 @@ class MusicQueueCommand extends ChannelSubCommand {
             sb.append(":").append("\n\n");
 
             for (final QueueItem track : tracks) {
-                sb.append("[" + ++queue_code + ']', Formatting.BLOCK).append(" ");
+                sb.append("[" + ++queue_code + ']', MessageBuilder.Formatting.BLOCK).append(" ");
 
                 sb.append(Util.sanitise(MusicManager.getFriendly(track.getTrack())));
 
@@ -109,7 +107,7 @@ class MusicQueueCommand extends ChannelSubCommand {
                 }
 
                 Member requestor = message.getGuild().getMemberById(track.getUserId());
-                sb.append(" ").append(requestor == null ? "User left server" : requestor.getEffectiveName(), Formatting.BLOCK);
+                sb.append(" ").append(requestor == null ? "User left server" : requestor.getEffectiveName(), MessageBuilder.Formatting.BLOCK);
 
                 sb.append("\n");
             }
@@ -119,7 +117,7 @@ class MusicQueueCommand extends ChannelSubCommand {
                 sb.append("End of page ").append(page + 1).append("/").append((int) Math.ceil((double) queue.size() / (double) pageSize)).append(".");
             }
 
-            sb.buildAll(SplitPolicy.NEWLINE).forEach(m -> this.reply(message, m));
+            sb.buildAll(MessageBuilder.SplitPolicy.NEWLINE).forEach(m -> this.reply(message, m));
         }
     }
 

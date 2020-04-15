@@ -16,6 +16,8 @@
 package ch.jamiete.hilda.music.commands;
 
 import java.util.Arrays;
+import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.entities.Message;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.Util;
@@ -24,9 +26,6 @@ import ch.jamiete.hilda.commands.ChannelSubCommand;
 import ch.jamiete.hilda.music.MusicManager;
 import ch.jamiete.hilda.music.MusicServer;
 import ch.jamiete.hilda.music.QueueItem;
-import net.dv8tion.jda.core.MessageBuilder;
-import net.dv8tion.jda.core.MessageBuilder.Formatting;
-import net.dv8tion.jda.core.entities.Message;
 
 class MusicNowPlayingCommand extends ChannelSubCommand {
     private final MusicManager manager;
@@ -56,17 +55,17 @@ class MusicNowPlayingCommand extends ChannelSubCommand {
         mb.append("Now playing ").append(Util.sanitise(MusicManager.getFriendly(playing.getTrack()))).append("\n");
 
         if (playing.getTrack().getInfo().length != 0L) {
-            mb.append("\n").append("Time: ", Formatting.BOLD);
+            mb.append("\n").append("Time: ", MessageBuilder.Formatting.BOLD);
             mb.append(DurationFormatUtils.formatDuration(playing.getTrack().getPosition(), "HH:mm:ss", true));
             mb.append("/");
             mb.append(DurationFormatUtils.formatDuration(playing.getTrack().getDuration(), "HH:mm:ss", true));
         }
 
         mb.append("\n");
-        mb.append("Requestor: ", Formatting.BOLD).append(message.getGuild().getMemberById(playing.getUserId()).getEffectiveName());
+        mb.append("Requestor: ", MessageBuilder.Formatting.BOLD).append(message.getGuild().getMemberById(playing.getUserId()).getEffectiveName());
 
         mb.append("\n");
-        mb.append("Skip votes: ", Formatting.BOLD);
+        mb.append("Skip votes: ", MessageBuilder.Formatting.BOLD);
         final int needed = (int) Math.ceil((double) server.getUsers() / 2);
         mb.append(server.getSkips()).append("/").append(needed);
 

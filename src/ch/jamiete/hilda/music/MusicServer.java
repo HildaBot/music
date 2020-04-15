@@ -35,21 +35,17 @@ import ch.jamiete.hilda.configuration.Configuration;
 import ch.jamiete.hilda.events.EventHandler;
 import ch.jamiete.hilda.music.tasks.MusicLeaveTask;
 import ch.jamiete.hilda.runnables.GameSetTask;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Game;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.VoiceChannel;
-import net.dv8tion.jda.core.events.Event;
-import net.dv8tion.jda.core.events.guild.voice.GuildVoiceDeafenEvent;
-import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
-import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
-import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMuteEvent;
-import net.dv8tion.jda.core.exceptions.PermissionException;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.events.Event;
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceDeafenEvent;
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMuteEvent;
+import net.dv8tion.jda.api.exceptions.PermissionException;
 
 /**
- * This class represents a {@link net.dv8tion.jda.core.entities.Guild Guild} that music is being played on.
+ * This class represents a {@link Guild} that music is being played on.
  */
 public class MusicServer extends AudioEventAdapter {
     private final MusicManager manager;
@@ -349,7 +345,7 @@ public class MusicServer extends AudioEventAdapter {
                 if (this.getSelf().hasPermission(this.channel, Permission.VOICE_MUTE_OTHERS)) {
                     Hilda.getLogger().fine("Skipping because I was muted");
                     this.sendMessage("Skipping song because I was muted...");
-                    this.guild.getController().setMute(this.getSelf(), false).queue();
+                    this.guild.mute(this.getSelf(), false).queue();
                     this.player.stopTrack();
                 } else {
                     Hilda.getLogger().fine("Stopping because I was muted and didn't have permission");
@@ -404,11 +400,7 @@ public class MusicServer extends AudioEventAdapter {
         if (this.isQueued(track)) {
             Hilda.getLogger().fine("Track was still in queue; deleting.");
             synchronized (this.queue) {
-                for (final QueueItem item : this.queue) {
-                    if (item.getTrack().equals(track)) {
-                        this.queue.remove(item);
-                    }
-                }
+                this.queue.removeIf(item -> item.getTrack().equals(track));
             }
         }
 
@@ -443,7 +435,7 @@ public class MusicServer extends AudioEventAdapter {
         this.manager.addPlayed();
 
         if (this.getSelf().getVoiceState().isGuildMuted() && this.getSelf().hasPermission(this.channel, Permission.VOICE_MUTE_OTHERS)) {
-            this.guild.getController().setMute(this.getSelf(), false).queue();
+            this.guild.mute(this.getSelf(), false).queue();
         }
 
         // Ensure track gone from queue
@@ -626,7 +618,7 @@ public class MusicServer extends AudioEventAdapter {
         }
 
         if (this.getSelf().getVoiceState().isGuildMuted() && this.getSelf().hasPermission(channel, Permission.VOICE_MUTE_OTHERS)) {
-            this.guild.getController().setMute(this.getSelf(), false).queue();
+            this.guild.mute(this.getSelf(), false).queue();
         }
 
         this.channel = channel;
@@ -639,7 +631,7 @@ public class MusicServer extends AudioEventAdapter {
      */
     private void setGame(final String set) {
         Hilda.getLogger().fine("Queueing game to " + set);
-        final Game game = this.manager.getHilda().getBot().getPresence().getGame();
+        final Activity game = this.manager.getHilda().getBot().getPresence().getActivity();
 
         if ((set == null) && (this.lastplaying == null)) {
             return;

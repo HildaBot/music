@@ -19,7 +19,7 @@ import java.util.TimerTask;
 import ch.jamiete.hilda.Hilda;
 import ch.jamiete.hilda.music.MusicManager;
 import ch.jamiete.hilda.music.MusicServer;
-import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.api.entities.Guild;
 
 public class MusicServerChecker extends TimerTask {
     private final MusicManager manager;
